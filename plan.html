@@ -1,0 +1,2169 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Project Database</title>
+
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+            :root {
+                --bg: #f4f6fb;
+                --panel: #ffffff;
+                --ink: #1b2130;
+                --muted: #6b7488;
+                --line: #e2e8f2;
+                --accent: #1f6feb;
+                --accent-soft: #e8f0ff;
+                --ok: #1f9254;
+                --todo: #8b93a8;
+                --progress: #d18d1f;
+                --high: #d14343;
+                --medium: #c07a00;
+                --low: #2f8a58;
+                --shadow: 0 10px 32px rgba(22, 31, 56, 0.12);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                font-family: "Space Grotesk", "Segoe UI", sans-serif;
+                color: var(--ink);
+                background:
+                    radial-gradient(
+                        circle at 0% 0%,
+                        #c9d8ff 0%,
+                        transparent 44%
+                    ),
+                    radial-gradient(
+                        circle at 100% 100%,
+                        #ffe5cb 0%,
+                        transparent 34%
+                    ),
+                    var(--bg);
+            }
+
+            .shell {
+                max-width: 1180px;
+                margin: 28px auto;
+                padding: 0 16px;
+            }
+
+            .header {
+                background: linear-gradient(120deg, #eef4ff 0%, #fff7eb 100%);
+                border: 1px solid #dbe4f6;
+                border-radius: 18px;
+                box-shadow: var(--shadow);
+                padding: 20px;
+                margin-bottom: 14px;
+            }
+
+            .title-row {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            h1 {
+                margin: 0;
+                font-size: clamp(1.45rem, 2.6vw, 2.1rem);
+                letter-spacing: -0.02em;
+            }
+
+            .subtext {
+                margin: 4px 0 0;
+                color: var(--muted);
+                font-size: 0.95rem;
+            }
+
+            .chips {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .chip {
+                border-radius: 999px;
+                border: 1px solid #d5dff2;
+                background: #fff;
+                padding: 6px 10px;
+                font-size: 0.8rem;
+                color: #31405d;
+            }
+
+            .panel {
+                background: var(--panel);
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
+            .toolbar {
+                padding: 14px;
+                border-bottom: 1px solid var(--line);
+                display: grid;
+                grid-template-columns: repeat(12, 1fr);
+                gap: 10px;
+            }
+
+            .group {
+                grid-column: span 3;
+            }
+
+            .group-wide {
+                grid-column: span 6;
+            }
+
+            .view-toggle {
+                display: inline-flex;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 2px;
+                background: #f6f9ff;
+            }
+
+            button,
+            select,
+            input {
+                font: inherit;
+            }
+
+            .view-button {
+                border: 0;
+                border-radius: 8px;
+                padding: 7px 12px;
+                background: transparent;
+                cursor: pointer;
+                color: var(--muted);
+            }
+
+            .view-button.active {
+                color: #fff;
+                background: var(--accent);
+            }
+
+            .input,
+            .select,
+            .add-input,
+            .add-select {
+                width: 100%;
+                border: 1px solid #d3dced;
+                border-radius: 10px;
+                padding: 8px 10px;
+                background: #fff;
+                color: var(--ink);
+            }
+
+            .table-wrap {
+                overflow-x: auto;
+            }
+
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                min-width: 980px;
+            }
+
+            th,
+            td {
+                border-bottom: 1px solid var(--line);
+                padding: 10px;
+                text-align: left;
+                vertical-align: middle;
+                white-space: nowrap;
+            }
+
+            th {
+                background: #fafcff;
+                font-size: 0.85rem;
+                color: #4f607f;
+                position: sticky;
+                top: 0;
+                z-index: 1;
+            }
+
+            .title-cell {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .description-input {
+                min-width: 220px;
+            }
+
+            .description-textarea {
+                resize: vertical;
+                min-height: 72px;
+                line-height: 1.35;
+            }
+
+            .table-description {
+                min-height: 44px;
+            }
+
+            .status-dot {
+                width: 9px;
+                height: 9px;
+                border-radius: 999px;
+                display: inline-block;
+            }
+
+            .dot-Todo {
+                background: var(--todo);
+            }
+
+            .dot-InProgress {
+                background: var(--progress);
+            }
+
+            .dot-Done {
+                background: var(--ok);
+            }
+
+            .status-radio-group {
+                display: inline-flex;
+                gap: 6px;
+                align-items: center;
+            }
+
+            .status-option {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                border: 1px solid #d3dced;
+                border-radius: 999px;
+                padding: 4px 8px;
+                font-size: 0.74rem;
+                cursor: pointer;
+                line-height: 1;
+            }
+
+            .status-option input[type="radio"] {
+                margin: 0;
+            }
+
+            .status-todo {
+                color: #5c6375;
+                background: #f2f4f8;
+                border-color: #d8dde9;
+            }
+
+            .status-todo input[type="radio"] {
+                accent-color: #7e8599;
+            }
+
+            .status-in-progress {
+                color: #8e6200;
+                background: #fff4df;
+                border-color: #f1d29b;
+            }
+
+            .status-in-progress input[type="radio"] {
+                accent-color: #e0a019;
+            }
+
+            .status-done {
+                color: #1f7b4b;
+                background: #e8f7ef;
+                border-color: #bfe7d0;
+            }
+
+            .status-done input[type="radio"] {
+                accent-color: #2a9e61;
+            }
+
+            .pill {
+                padding: 4px 8px;
+                border-radius: 999px;
+                font-size: 0.77rem;
+                border: 1px solid transparent;
+            }
+
+            .type-task {
+                background: #edf3ff;
+                color: #375ea3;
+                border-color: #cfddfb;
+            }
+
+            .type-feature {
+                background: #ebfdf1;
+                color: #246844;
+                border-color: #c8ebd7;
+            }
+
+            .type-bug {
+                background: #fff1f1;
+                color: #8f2a2a;
+                border-color: #f4d0d0;
+            }
+
+            .priority-high {
+                color: var(--high);
+            }
+
+            .priority-medium {
+                color: var(--medium);
+            }
+
+            .priority-low {
+                color: var(--low);
+            }
+
+            .board {
+                display: grid;
+                gap: 12px;
+                grid-template-columns: repeat(3, minmax(220px, 1fr));
+                padding: 14px;
+            }
+
+            .column {
+                background: #fbfcff;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 10px;
+                min-height: 240px;
+            }
+
+            .column h3 {
+                margin: 0 0 10px;
+                font-size: 0.92rem;
+                color: #3d4b69;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .column-controls {
+                display: grid;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .column-sort {
+                width: 100%;
+                border: 1px solid #d3dced;
+                border-radius: 8px;
+                padding: 6px 8px;
+                background: #fff;
+                color: var(--ink);
+                font-size: 0.82rem;
+            }
+
+            .column-add {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 6px;
+            }
+
+            .column-add-input {
+                border: 1px solid #d3dced;
+                border-radius: 8px;
+                padding: 6px 8px;
+                background: #fff;
+                color: var(--ink);
+                font-size: 0.82rem;
+            }
+
+            .column-add-button {
+                border: 1px solid #c7d8fb;
+                border-radius: 8px;
+                padding: 6px 9px;
+                background: #edf3ff;
+                color: #234b92;
+                font-size: 0.8rem;
+                cursor: pointer;
+            }
+
+            .card {
+                background: #fff;
+                border: 1px solid #dde6f4;
+                border-radius: 10px;
+                padding: 10px;
+                margin-bottom: 10px;
+                cursor: grab;
+                transition:
+                    transform 0.15s ease,
+                    box-shadow 0.15s ease;
+            }
+
+            .card:active {
+                cursor: grabbing;
+            }
+
+            .card.dragging {
+                opacity: 0.65;
+                transform: rotate(1deg) scale(0.99);
+            }
+
+            .column.drop-target {
+                border-color: #a9c3f6;
+                background: #f3f8ff;
+            }
+
+            .card:last-child {
+                margin-bottom: 0;
+            }
+
+            .card-title {
+                display: block;
+                font-weight: 600;
+                margin-bottom: 6px;
+            }
+
+            .card-meta {
+                display: flex;
+                justify-content: space-between;
+                gap: 6px;
+                align-items: center;
+                font-size: 0.8rem;
+                color: var(--muted);
+            }
+
+            .card-desc {
+                margin: 2px 0 8px;
+                color: #4f5c78;
+                font-size: 0.82rem;
+                white-space: pre-line;
+                line-height: 1.35;
+            }
+
+            .card-head {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 8px;
+                margin-bottom: 6px;
+            }
+
+            .danger-button {
+                border: 1px solid #f2c5c5;
+                border-radius: 8px;
+                padding: 5px 8px;
+                background: #fff3f3;
+                color: #992a2a;
+                font-size: 0.75rem;
+                line-height: 1;
+                cursor: pointer;
+            }
+
+            .empty {
+                color: var(--muted);
+                font-size: 0.85rem;
+                text-align: center;
+                padding: 10px;
+                border: 1px dashed #d3dcf0;
+                border-radius: 10px;
+                background: #fff;
+            }
+
+            .panel-actions {
+                padding: 12px;
+                border-top: 1px solid var(--line);
+                background: #fafcff;
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .add-button {
+                border: 0;
+                background: var(--accent);
+                color: #fff;
+                border-radius: 10px;
+                padding: 9px 14px;
+                cursor: pointer;
+            }
+
+            .modal {
+                position: fixed;
+                inset: 0;
+                display: grid;
+                place-items: center;
+                padding: 16px;
+                background: rgba(15, 24, 44, 0.5);
+                z-index: 20;
+            }
+
+            .modal-card {
+                width: min(760px, 100%);
+                background: #fff;
+                border: 1px solid #d5deef;
+                border-radius: 14px;
+                box-shadow: 0 18px 45px rgba(21, 34, 62, 0.24);
+                overflow: hidden;
+            }
+
+            .modal-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                padding: 12px 14px;
+                border-bottom: 1px solid #e3e9f4;
+            }
+
+            .modal-title {
+                margin: 0;
+                font-size: 1rem;
+            }
+
+            .ghost-button {
+                border: 1px solid #d6deee;
+                border-radius: 8px;
+                background: #fff;
+                color: #41506f;
+                padding: 7px 10px;
+                cursor: pointer;
+            }
+
+            .add-modal-form {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                padding: 14px;
+            }
+
+            .modal-radio-section {
+                border: 1px solid #d8e0ee;
+                border-radius: 10px;
+                padding: 8px;
+                margin: 0;
+            }
+
+            .modal-radio-label {
+                color: #526282;
+                font-size: 0.78rem;
+                padding: 0 4px;
+            }
+
+            .modal-radio-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .modal-radio-option {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                border: 1px solid #d3dced;
+                border-radius: 999px;
+                padding: 4px 8px;
+                font-size: 0.78rem;
+                cursor: pointer;
+                line-height: 1;
+            }
+
+            .modal-radio-option input[type="radio"] {
+                margin: 0;
+            }
+
+            .modal-radio-option input[type="radio"]:checked + span {
+                font-weight: 700;
+            }
+
+            .modal-radio-option:has(input[type="radio"]:checked) {
+                box-shadow: inset 0 0 0 2px currentColor;
+                transform: translateY(-1px);
+            }
+
+            .type-option-task {
+                background: #edf3ff;
+                color: #375ea3;
+                border-color: #cfddfb;
+            }
+
+            .type-option-feature {
+                background: #ebfdf1;
+                color: #246844;
+                border-color: #c8ebd7;
+            }
+
+            .type-option-bug {
+                background: #fff1f1;
+                color: #8f2a2a;
+                border-color: #f4d0d0;
+            }
+
+            .priority-option-high {
+                background: #fff1f1;
+                color: #8f2a2a;
+                border-color: #f4d0d0;
+            }
+
+            .priority-option-medium {
+                background: #fff4df;
+                color: #8e6200;
+                border-color: #f1d29b;
+            }
+
+            .priority-option-low {
+                background: #e8f7ef;
+                color: #1f7b4b;
+                border-color: #bfe7d0;
+            }
+
+            .add-modal-form .full {
+                grid-column: span 2;
+            }
+
+            .modal-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                grid-column: span 2;
+                padding-top: 4px;
+            }
+
+            .field-group {
+                display: grid;
+                gap: 4px;
+            }
+
+            .field-label {
+                font-size: 0.8rem;
+                color: #4c5d7c;
+            }
+
+            .table-text {
+                max-width: 260px;
+                white-space: normal;
+                line-height: 1.35;
+            }
+
+            .status-badge {
+                display: inline-flex;
+                align-items: center;
+                border: 1px solid #d3dced;
+                border-radius: 999px;
+                padding: 4px 8px;
+                font-size: 0.78rem;
+                line-height: 1;
+            }
+
+            .priority-select {
+                min-width: 106px;
+            }
+
+            .action-button {
+                border: 1px solid #d6deee;
+                border-radius: 8px;
+                background: #fff;
+                color: #41506f;
+                padding: 5px 8px;
+                font-size: 0.75rem;
+                line-height: 1;
+                cursor: pointer;
+            }
+
+            .actions-cell {
+                display: flex;
+                gap: 6px;
+            }
+
+            .view-grid {
+                padding: 14px;
+                display: grid;
+                gap: 10px;
+            }
+
+            .view-grid p {
+                margin: 0;
+                color: #263553;
+                white-space: pre-line;
+            }
+
+            .view-grid strong {
+                color: #4c5d7c;
+                font-size: 0.82rem;
+                margin-right: 6px;
+            }
+
+            .view-hero {
+                display: grid;
+                gap: 8px;
+                padding: 14px;
+                border-bottom: 1px solid #e3e9f4;
+                background: linear-gradient(120deg, #f2f7ff 0%, #fff6eb 100%);
+            }
+
+            .view-title {
+                margin: 0;
+                font-size: 1.16rem;
+                line-height: 1.3;
+            }
+
+            .view-description {
+                margin: 0;
+                color: #445272;
+                white-space: pre-line;
+            }
+
+            .view-meta-chips {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            .view-chip {
+                display: inline-flex;
+                align-items: center;
+                border: 1px solid #d3dced;
+                border-radius: 999px;
+                padding: 4px 8px;
+                font-size: 0.76rem;
+            }
+
+            .view-details {
+                padding: 14px;
+                display: grid;
+                gap: 8px;
+            }
+
+            .view-row {
+                display: grid;
+                grid-template-columns: 110px 1fr;
+                gap: 10px;
+                align-items: start;
+            }
+
+            .view-key {
+                color: #5a6784;
+                font-size: 0.8rem;
+            }
+
+            .view-value {
+                color: #263553;
+                white-space: pre-line;
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            @media (max-width: 960px) {
+                .group,
+                .group-wide {
+                    grid-column: span 6;
+                }
+
+                .board {
+                    grid-template-columns: 1fr;
+                }
+
+                .add-modal-form {
+                    grid-template-columns: 1fr;
+                }
+
+                .add-modal-form .full,
+                .modal-actions {
+                    grid-column: span 1;
+                }
+            }
+
+            @media (max-width: 620px) {
+                .toolbar {
+                    grid-template-columns: repeat(6, 1fr);
+                }
+
+                .group,
+                .group-wide {
+                    grid-column: span 6;
+                }
+
+                .chips {
+                    margin-top: 10px;
+                }
+            }
+
+            .is-done {
+                text-decoration: line-through;
+                color: #81879a;
+            }
+        </style>
+    </head>
+
+    <body>
+        <main class="shell">
+            <section class="header">
+                <div class="title-row">
+                    <div>
+                        <h1 id="title">Project Database</h1>
+                        <p class="subtext">
+                            A single source of truth for tasks, features, and
+                            bugs.
+                        </p>
+                    </div>
+                    <div class="chips" id="summaryChips"></div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="toolbar">
+                    <div class="group">
+                        <div
+                            class="view-toggle"
+                            role="tablist"
+                            aria-label="View selector"
+                        >
+                            <button
+                                id="tableViewBtn"
+                                class="view-button active"
+                                type="button"
+                            >
+                                Table
+                            </button>
+                            <button
+                                id="boardViewBtn"
+                                class="view-button"
+                                type="button"
+                            >
+                                Board
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="group-wide">
+                        <input
+                            id="searchInput"
+                            class="input"
+                            type="search"
+                            placeholder="Search title or assignee"
+                        />
+                    </div>
+
+                    <div class="group">
+                        <select id="typeFilter" class="select">
+                            <option value="all">All Types</option>
+                            <option value="task">Task</option>
+                            <option value="feature">Feature</option>
+                            <option value="bug">Bug</option>
+                        </select>
+                    </div>
+
+                    <div class="group">
+                        <select id="statusFilter" class="select">
+                            <option value="all">All Status</option>
+                            <option value="Todo">Todo</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Done">Done</option>
+                        </select>
+                    </div>
+
+                    <div class="group">
+                        <select id="priorityFilter" class="select">
+                            <option value="all">All Priorities</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+
+                    <div class="group">
+                        <select id="sortBy" class="select">
+                            <option value="createdAt-desc">Newest</option>
+                            <option value="createdAt-asc">Oldest</option>
+                            <option value="priority-desc">
+                                Priority High-Low
+                            </option>
+                            <option value="priority-asc">
+                                Priority Low-High
+                            </option>
+                            <option value="title-asc">Title A-Z</option>
+                            <option value="title-desc">Title Z-A</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="tableView" class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Assignee</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="boardView" class="hidden board"></div>
+
+                <div class="panel-actions">
+                    <button
+                        id="openAddModalBtn"
+                        class="add-button"
+                        type="button"
+                    >
+                        Add New Item
+                    </button>
+                </div>
+            </section>
+
+            <div
+                id="addModal"
+                class="modal hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="addModalTitle"
+            >
+                <div class="modal-card">
+                    <div class="modal-head">
+                        <h2 id="addModalTitle" class="modal-title">Add Item</h2>
+                        <button
+                            id="closeAddModalBtn"
+                            class="ghost-button"
+                            type="button"
+                        >
+                            Close
+                        </button>
+                    </div>
+                    <form id="addForm" class="add-modal-form">
+                        <div class="field-group full">
+                            <label class="field-label" for="addTitle"
+                                >Title</label
+                            >
+                            <input
+                                id="addTitle"
+                                class="add-input"
+                                required
+                                placeholder="Add a new item title"
+                            />
+                        </div>
+                        <div class="field-group full">
+                            <label class="field-label" for="addDescription"
+                                >Description</label
+                            >
+                            <textarea
+                                id="addDescription"
+                                class="add-input description-textarea"
+                                placeholder="Short description"
+                            ></textarea>
+                        </div>
+                        <fieldset class="modal-radio-section">
+                            <legend class="modal-radio-label">Type</legend>
+                            <div class="modal-radio-group">
+                                <label
+                                    class="modal-radio-option type-option-task"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="addType"
+                                        value="task"
+                                        checked
+                                    />
+                                    <span>Task</span>
+                                </label>
+                                <label
+                                    class="modal-radio-option type-option-feature"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="addType"
+                                        value="feature"
+                                    />
+                                    <span>Feature</span>
+                                </label>
+                                <label
+                                    class="modal-radio-option type-option-bug"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="addType"
+                                        value="bug"
+                                    />
+                                    <span>Bug</span>
+                                </label>
+                            </div>
+                        </fieldset>
+                        <fieldset class="modal-radio-section">
+                            <legend class="modal-radio-label">Status</legend>
+                            <div class="modal-radio-group">
+                                <label class="modal-radio-option status-todo">
+                                    <input
+                                        type="radio"
+                                        name="addStatus"
+                                        value="Todo"
+                                        checked
+                                    />
+                                    <span>Todo</span>
+                                </label>
+                                <label
+                                    class="modal-radio-option status-in-progress"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="addStatus"
+                                        value="In Progress"
+                                    />
+                                    <span>In Progress</span>
+                                </label>
+                                <label class="modal-radio-option status-done">
+                                    <input
+                                        type="radio"
+                                        name="addStatus"
+                                        value="Done"
+                                    />
+                                    <span>Done</span>
+                                </label>
+                            </div>
+                        </fieldset>
+                        <fieldset class="modal-radio-section">
+                            <legend class="modal-radio-label">Priority</legend>
+                            <div class="modal-radio-group">
+                                <label
+                                    class="modal-radio-option priority-option-low"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="addPriority"
+                                        value="low"
+                                    />
+                                    <span>Low</span>
+                                </label>
+                                <label
+                                    class="modal-radio-option priority-option-medium"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="addPriority"
+                                        value="medium"
+                                        checked
+                                    />
+                                    <span>Medium</span>
+                                </label>
+                                <label
+                                    class="modal-radio-option priority-option-high"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="addPriority"
+                                        value="high"
+                                    />
+                                    <span>High</span>
+                                </label>
+                            </div>
+                        </fieldset>
+                        <input
+                            id="addAssignee"
+                            class="add-input"
+                            placeholder="Assignee"
+                        />
+                        <div class="modal-actions">
+                            <button
+                                id="cancelAddModalBtn"
+                                class="ghost-button"
+                                type="button"
+                            >
+                                Cancel
+                            </button>
+                            <button class="add-button" type="submit">
+                                Add Item
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div
+                id="editModal"
+                class="modal hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="editModalTitle"
+            >
+                <div class="modal-card">
+                    <div class="modal-head">
+                        <h2 id="editModalTitle" class="modal-title">
+                            Edit Item
+                        </h2>
+                        <button
+                            id="closeEditModalBtn"
+                            class="ghost-button"
+                            type="button"
+                        >
+                            Close
+                        </button>
+                    </div>
+                    <form id="editForm" class="add-modal-form">
+                        <div class="field-group full">
+                            <label class="field-label" for="editTitle"
+                                >Title</label
+                            >
+                            <input id="editTitle" class="add-input" required />
+                        </div>
+                        <div class="field-group full">
+                            <label class="field-label" for="editDescription"
+                                >Description</label
+                            >
+                            <textarea
+                                id="editDescription"
+                                class="add-input description-textarea"
+                            ></textarea>
+                        </div>
+                        <fieldset class="modal-radio-section">
+                            <legend class="modal-radio-label">Type</legend>
+                            <div class="modal-radio-group">
+                                <label
+                                    class="modal-radio-option type-option-task"
+                                    ><input
+                                        type="radio"
+                                        name="editType"
+                                        value="task"
+                                    /><span>Task</span></label
+                                >
+                                <label
+                                    class="modal-radio-option type-option-feature"
+                                    ><input
+                                        type="radio"
+                                        name="editType"
+                                        value="feature"
+                                    /><span>Feature</span></label
+                                >
+                                <label
+                                    class="modal-radio-option type-option-bug"
+                                    ><input
+                                        type="radio"
+                                        name="editType"
+                                        value="bug"
+                                    /><span>Bug</span></label
+                                >
+                            </div>
+                        </fieldset>
+                        <fieldset class="modal-radio-section">
+                            <legend class="modal-radio-label">Status</legend>
+                            <div class="modal-radio-group">
+                                <label class="modal-radio-option status-todo"
+                                    ><input
+                                        type="radio"
+                                        name="editStatus"
+                                        value="Todo"
+                                    /><span>Todo</span></label
+                                >
+                                <label
+                                    class="modal-radio-option status-in-progress"
+                                    ><input
+                                        type="radio"
+                                        name="editStatus"
+                                        value="In Progress"
+                                    /><span>In Progress</span></label
+                                >
+                                <label class="modal-radio-option status-done"
+                                    ><input
+                                        type="radio"
+                                        name="editStatus"
+                                        value="Done"
+                                    /><span>Done</span></label
+                                >
+                            </div>
+                        </fieldset>
+                        <fieldset class="modal-radio-section">
+                            <legend class="modal-radio-label">Priority</legend>
+                            <div class="modal-radio-group">
+                                <label
+                                    class="modal-radio-option priority-option-low"
+                                    ><input
+                                        type="radio"
+                                        name="editPriority"
+                                        value="low"
+                                    /><span>Low</span></label
+                                >
+                                <label
+                                    class="modal-radio-option priority-option-medium"
+                                    ><input
+                                        type="radio"
+                                        name="editPriority"
+                                        value="medium"
+                                    /><span>Medium</span></label
+                                >
+                                <label
+                                    class="modal-radio-option priority-option-high"
+                                    ><input
+                                        type="radio"
+                                        name="editPriority"
+                                        value="high"
+                                    /><span>High</span></label
+                                >
+                            </div>
+                        </fieldset>
+                        <input
+                            id="editAssignee"
+                            class="add-input"
+                            placeholder="Assignee"
+                        />
+                        <div class="modal-actions">
+                            <button
+                                id="cancelEditModalBtn"
+                                class="ghost-button"
+                                type="button"
+                            >
+                                Cancel
+                            </button>
+                            <button class="add-button" type="submit">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div
+                id="viewModal"
+                class="modal hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="viewModalTitle"
+            >
+                <div class="modal-card">
+                    <div class="modal-head">
+                        <h2 id="viewModalTitle" class="modal-title">
+                            Item Details
+                        </h2>
+                        <button
+                            id="closeViewModalBtn"
+                            class="ghost-button"
+                            type="button"
+                        >
+                            Close
+                        </button>
+                    </div>
+                    <div id="viewContent" class="view-grid"></div>
+                    <div class="modal-actions" style="padding: 0 14px 14px">
+                        <button
+                            id="dismissViewModalBtn"
+                            class="ghost-button"
+                            type="button"
+                        >
+                            Done
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            const STORAGE_KEY = "project-database-v1";
+            const state = {
+                title: "Project Database",
+                items: [],
+                editingItemId: null,
+                view: "table",
+                search: "",
+                type: "all",
+                status: "all",
+                priority: "all",
+                sortBy: "createdAt-desc",
+                boardControls: {
+                    Todo: "createdAt-desc",
+                    "In Progress": "priority-desc",
+                    Done: "createdAt-desc",
+                },
+            };
+
+            const priorityValue = { high: 3, medium: 2, low: 1 };
+
+            const nodes = {
+                title: document.getElementById("title"),
+                summaryChips: document.getElementById("summaryChips"),
+                tableBody: document.getElementById("tableBody"),
+                boardView: document.getElementById("boardView"),
+                tableView: document.getElementById("tableView"),
+                tableViewBtn: document.getElementById("tableViewBtn"),
+                boardViewBtn: document.getElementById("boardViewBtn"),
+                searchInput: document.getElementById("searchInput"),
+                typeFilter: document.getElementById("typeFilter"),
+                statusFilter: document.getElementById("statusFilter"),
+                priorityFilter: document.getElementById("priorityFilter"),
+                sortBy: document.getElementById("sortBy"),
+                openAddModalBtn: document.getElementById("openAddModalBtn"),
+                addModal: document.getElementById("addModal"),
+                closeAddModalBtn: document.getElementById("closeAddModalBtn"),
+                cancelAddModalBtn: document.getElementById("cancelAddModalBtn"),
+                addForm: document.getElementById("addForm"),
+                addTitle: document.getElementById("addTitle"),
+                addDescription: document.getElementById("addDescription"),
+                addAssignee: document.getElementById("addAssignee"),
+                editModal: document.getElementById("editModal"),
+                closeEditModalBtn: document.getElementById("closeEditModalBtn"),
+                cancelEditModalBtn:
+                    document.getElementById("cancelEditModalBtn"),
+                editForm: document.getElementById("editForm"),
+                editTitle: document.getElementById("editTitle"),
+                editDescription: document.getElementById("editDescription"),
+                editAssignee: document.getElementById("editAssignee"),
+                viewModal: document.getElementById("viewModal"),
+                closeViewModalBtn: document.getElementById("closeViewModalBtn"),
+                dismissViewModalBtn: document.getElementById(
+                    "dismissViewModalBtn",
+                ),
+                viewContent: document.getElementById("viewContent"),
+            };
+
+            function normalizeIncomingData(data) {
+                const sourceItems = Array.isArray(data.items)
+                    ? data.items
+                    : data.tasks || [];
+
+                const normalizedItems = sourceItems.map((item, index) => {
+                    const text = item.text || item.title || "Untitled";
+                    const done =
+                        typeof item.done === "boolean"
+                            ? item.done
+                            : item.status === "Done";
+                    return {
+                        id: item.id || Date.now() + index,
+                        title: text,
+                        description: item.description || "",
+                        type: item.type || "task",
+                        status: item.status || (done ? "Done" : "Todo"),
+                        priority: item.priority || "medium",
+                        assignee: item.assignee || "Unassigned",
+                        createdAt:
+                            item.createdAt ||
+                            new Date().toISOString().slice(0, 10),
+                        done,
+                    };
+                });
+
+                return {
+                    title: data.title || "Project Database",
+                    items: normalizedItems,
+                };
+            }
+
+            function toClassToken(value) {
+                return String(value).replace(/\s+/g, "");
+            }
+
+            function getStatusClass(status) {
+                if (status === "Done") {
+                    return "status-done";
+                }
+
+                if (status === "In Progress") {
+                    return "status-in-progress";
+                }
+
+                return "status-todo";
+            }
+
+            function escapeHtml(value) {
+                return String(value)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/\"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+            }
+
+            function persist() {
+                const payload = {
+                    title: state.title,
+                    items: state.items,
+                    boardControls: state.boardControls,
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            }
+
+            function sortRecords(items, sortBy) {
+                const [field, direction] = sortBy.split("-");
+
+                items.sort((a, b) => {
+                    let left = a[field];
+                    let right = b[field];
+
+                    if (field === "priority") {
+                        left = priorityValue[left] || 0;
+                        right = priorityValue[right] || 0;
+                    }
+
+                    if (field === "createdAt") {
+                        left = new Date(left).getTime();
+                        right = new Date(right).getTime();
+                    }
+
+                    if (typeof left === "string" && typeof right === "string") {
+                        left = left.toLowerCase();
+                        right = right.toLowerCase();
+                    }
+
+                    if (left < right) {
+                        return direction === "asc" ? -1 : 1;
+                    }
+
+                    if (left > right) {
+                        return direction === "asc" ? 1 : -1;
+                    }
+
+                    return 0;
+                });
+
+                return items;
+            }
+
+            function getFilteredAndSortedItems() {
+                const filtered = state.items.filter((item) => {
+                    const inSearch =
+                        `${item.title} ${item.description || ""} ${item.assignee}`
+                            .toLowerCase()
+                            .includes(state.search.toLowerCase());
+                    const inType =
+                        state.type === "all" || item.type === state.type;
+                    const inStatus =
+                        state.status === "all" || item.status === state.status;
+                    const inPriority =
+                        state.priority === "all" ||
+                        item.priority === state.priority;
+
+                    return inSearch && inType && inStatus && inPriority;
+                });
+
+                return sortRecords(filtered, state.sortBy);
+            }
+
+            function renderSummaryChips(items) {
+                const totals = {
+                    all: items.length,
+                    task: items.filter((item) => item.type === "task").length,
+                    feature: items.filter((item) => item.type === "feature")
+                        .length,
+                    bug: items.filter((item) => item.type === "bug").length,
+                    done: items.filter((item) => item.done).length,
+                };
+
+                nodes.summaryChips.innerHTML = "";
+                [
+                    `All: ${totals.all}`,
+                    `Tasks: ${totals.task}`,
+                    `Features: ${totals.feature}`,
+                    `Bugs: ${totals.bug}`,
+                    `Done: ${totals.done}`,
+                ].forEach((label) => {
+                    const chip = document.createElement("span");
+                    chip.className = "chip";
+                    chip.textContent = label;
+                    nodes.summaryChips.appendChild(chip);
+                });
+            }
+
+            function renderTable(items) {
+                nodes.tableBody.innerHTML = "";
+
+                if (!items.length) {
+                    const row = document.createElement("tr");
+                    row.innerHTML =
+                        '<td colspan="8"><div class="empty">No matching records.</div></td>';
+                    nodes.tableBody.appendChild(row);
+                    return;
+                }
+
+                items.forEach((item) => {
+                    const row = document.createElement("tr");
+                    const safeTitle = escapeHtml(item.title);
+                    const safeDescription = escapeHtml(item.description || "");
+                    const safeAssignee = escapeHtml(item.assignee);
+                    const statusClass = getStatusClass(item.status);
+
+                    row.innerHTML = `
+                        <td>
+                            <div class="title-cell ${item.done ? "is-done" : ""}">
+                                <span class="status-dot dot-${toClassToken(item.status)}"></span>
+                                <span class="table-text">${safeTitle}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="table-text">${safeDescription || "-"}</span>
+                        </td>
+                        <td>
+                            <span class="pill type-${item.type}">${item.type}</span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${statusClass}">${item.status}</span>
+                        </td>
+                        <td>
+                            <select class="select priority-select" data-action="setPriority" data-id="${item.id}">
+                                <option value="low" ${item.priority === "low" ? "selected" : ""}>low</option>
+                                <option value="medium" ${item.priority === "medium" ? "selected" : ""}>medium</option>
+                                <option value="high" ${item.priority === "high" ? "selected" : ""}>high</option>
+                            </select>
+                        </td>
+                        <td>${safeAssignee}</td>
+                        <td>${item.createdAt}</td>
+                        <td class="actions-cell">
+                            <button class="action-button" type="button" data-action="viewRow" data-id="${item.id}">View</button>
+                            <button class="action-button" type="button" data-action="editRow" data-id="${item.id}">Edit</button>
+                            <button class="danger-button" type="button" data-action="deleteItem" data-id="${item.id}">Delete</button>
+                        </td>
+                    `;
+                    nodes.tableBody.appendChild(row);
+                });
+            }
+
+            function renderBoard(items) {
+                const columns = ["Todo", "In Progress", "Done"];
+                nodes.boardView.innerHTML = "";
+
+                columns.forEach((status) => {
+                    const group = items.filter(
+                        (item) => item.status === status,
+                    );
+                    const columnSort =
+                        state.boardControls[status] || "createdAt-desc";
+                    const sortedGroup = sortRecords([...group], columnSort);
+                    const col = document.createElement("section");
+                    col.className = "column";
+                    col.dataset.status = status;
+
+                    const heading = document.createElement("h3");
+                    heading.innerHTML = `<span>${status}</span><span>${group.length}</span>`;
+                    col.appendChild(heading);
+
+                    const controls = document.createElement("div");
+                    controls.className = "column-controls";
+                    controls.innerHTML = `
+                        <select class="column-sort" data-action="columnSort" data-status="${status}">
+                            <option value="createdAt-desc" ${columnSort === "createdAt-desc" ? "selected" : ""}>Newest first</option>
+                            <option value="createdAt-asc" ${columnSort === "createdAt-asc" ? "selected" : ""}>Oldest first</option>
+                            <option value="priority-desc" ${columnSort === "priority-desc" ? "selected" : ""}>Priority high-low</option>
+                            <option value="priority-asc" ${columnSort === "priority-asc" ? "selected" : ""}>Priority low-high</option>
+                            <option value="title-asc" ${columnSort === "title-asc" ? "selected" : ""}>Title A-Z</option>
+                            <option value="title-desc" ${columnSort === "title-desc" ? "selected" : ""}>Title Z-A</option>
+                        </select>
+                        <form class="column-add" data-action="columnAdd" data-status="${status}">
+                            <input
+                                class="column-add-input"
+                                name="title"
+                                placeholder="Add to ${status}"
+                                required
+                            />
+                            <button class="column-add-button" type="submit">Add</button>
+                        </form>
+                    `;
+                    col.appendChild(controls);
+
+                    if (!group.length) {
+                        const empty = document.createElement("div");
+                        empty.className = "empty";
+                        empty.textContent = "No items";
+                        col.appendChild(empty);
+                    }
+
+                    sortedGroup.forEach((item) => {
+                        const card = document.createElement("article");
+                        card.className = "card";
+                        card.draggable = true;
+                        card.dataset.id = String(item.id);
+                        const safeTitle = escapeHtml(item.title);
+                        const safeDescription = escapeHtml(
+                            item.description || "",
+                        );
+                        const safeAssignee = escapeHtml(item.assignee);
+                        card.innerHTML = `
+                            <div class="card-head">
+                                <span class="card-title ${item.done ? "is-done" : ""}">${safeTitle}</span>
+                                <button class="danger-button" type="button" data-action="deleteItem" data-id="${item.id}">Delete</button>
+                            </div>
+                            ${safeDescription ? `<p class="card-desc">${safeDescription}</p>` : ""}
+                            <div class="card-meta">
+                                <span class="pill type-${item.type}">${item.type}</span>
+                                <span class="priority-${item.priority}">${item.priority}</span>
+                            </div>
+                            <div class="card-meta">
+                                <span>${safeAssignee}</span>
+                                <span>${item.createdAt}</span>
+                            </div>
+                        `;
+                        col.appendChild(card);
+                    });
+
+                    nodes.boardView.appendChild(col);
+                });
+            }
+
+            function render() {
+                const computedItems = getFilteredAndSortedItems();
+
+                nodes.tableView.classList.toggle(
+                    "hidden",
+                    state.view !== "table",
+                );
+                nodes.boardView.classList.toggle(
+                    "hidden",
+                    state.view !== "board",
+                );
+                nodes.tableViewBtn.classList.toggle(
+                    "active",
+                    state.view === "table",
+                );
+                nodes.boardViewBtn.classList.toggle(
+                    "active",
+                    state.view === "board",
+                );
+
+                renderSummaryChips(state.items);
+                renderTable(computedItems);
+                renderBoard(computedItems);
+            }
+
+            function updateItem(id, updater) {
+                state.items = state.items.map((item) => {
+                    if (item.id !== id) {
+                        return item;
+                    }
+                    return updater(item);
+                });
+
+                persist();
+                render();
+            }
+
+            function deleteItem(id) {
+                state.items = state.items.filter((item) => item.id !== id);
+                persist();
+                render();
+            }
+
+            function findItemById(id) {
+                return state.items.find((item) => item.id === id) || null;
+            }
+
+            function openAddModal() {
+                nodes.addModal.classList.remove("hidden");
+                nodes.addTitle.focus();
+            }
+
+            function closeAddModal(resetForm = false) {
+                nodes.addModal.classList.add("hidden");
+
+                if (resetForm) {
+                    nodes.addForm.reset();
+                }
+            }
+
+            function openEditModal(id) {
+                const item = findItemById(id);
+                if (!item) {
+                    return;
+                }
+
+                state.editingItemId = id;
+                nodes.editTitle.value = item.title;
+                nodes.editDescription.value = item.description || "";
+                nodes.editAssignee.value = item.assignee || "";
+
+                setSelectedRadioValue(nodes.editForm, "editType", item.type);
+                setSelectedRadioValue(
+                    nodes.editForm,
+                    "editStatus",
+                    item.status,
+                );
+                setSelectedRadioValue(
+                    nodes.editForm,
+                    "editPriority",
+                    item.priority,
+                );
+
+                nodes.editModal.classList.remove("hidden");
+                nodes.editTitle.focus();
+            }
+
+            function closeEditModal(resetForm = false) {
+                nodes.editModal.classList.add("hidden");
+                state.editingItemId = null;
+
+                if (resetForm) {
+                    nodes.editForm.reset();
+                }
+            }
+
+            function openViewModal(id) {
+                const item = findItemById(id);
+                if (!item) {
+                    return;
+                }
+
+                const safeTitle = escapeHtml(item.title);
+                const safeDescription = escapeHtml(
+                    item.description || "No description provided.",
+                );
+                const safeType = escapeHtml(item.type);
+                const safeStatus = escapeHtml(item.status);
+                const safePriority = escapeHtml(item.priority);
+                const safeAssignee = escapeHtml(item.assignee || "Unassigned");
+                const safeCreatedAt = escapeHtml(item.createdAt);
+                const statusClass = getStatusClass(item.status);
+
+                nodes.viewContent.innerHTML = `
+                    <section class="view-hero">
+                        <h3 class="view-title">${safeTitle}</h3>
+                        <p class="view-description">${safeDescription}</p>
+                        <div class="view-meta-chips">
+                            <span class="pill type-${safeType}">${safeType}</span>
+                            <span class="view-chip ${statusClass}">${safeStatus}</span>
+                            <span class="view-chip priority-${safePriority}">${safePriority}</span>
+                        </div>
+                    </section>
+                    <section class="view-details">
+                        <div class="view-row">
+                            <span class="view-key">Assignee</span>
+                            <span class="view-value">${safeAssignee}</span>
+                        </div>
+                        <div class="view-row">
+                            <span class="view-key">Created</span>
+                            <span class="view-value">${safeCreatedAt}</span>
+                        </div>
+                        <div class="view-row">
+                            <span class="view-key">Item ID</span>
+                            <span class="view-value">${item.id}</span>
+                        </div>
+                    </section>
+                `;
+
+                nodes.viewModal.classList.remove("hidden");
+            }
+
+            function closeViewModal() {
+                nodes.viewModal.classList.add("hidden");
+            }
+
+            function getSelectedRadioValue(form, name, fallback) {
+                const selected = form.querySelector(
+                    `input[name="${name}"]:checked`,
+                );
+
+                return selected ? selected.value : fallback;
+            }
+
+            function setSelectedRadioValue(form, name, value) {
+                const target = form.querySelector(
+                    `input[name="${name}"][value="${value}"]`,
+                );
+
+                if (target) {
+                    target.checked = true;
+                }
+            }
+
+            function registerEvents() {
+                nodes.tableViewBtn.addEventListener("click", () => {
+                    state.view = "table";
+                    render();
+                });
+
+                nodes.boardViewBtn.addEventListener("click", () => {
+                    state.view = "board";
+                    render();
+                });
+
+                nodes.searchInput.addEventListener("input", (event) => {
+                    state.search = event.target.value;
+                    render();
+                });
+
+                nodes.typeFilter.addEventListener("change", (event) => {
+                    state.type = event.target.value;
+                    render();
+                });
+
+                nodes.statusFilter.addEventListener("change", (event) => {
+                    state.status = event.target.value;
+                    render();
+                });
+
+                nodes.priorityFilter.addEventListener("change", (event) => {
+                    state.priority = event.target.value;
+                    render();
+                });
+
+                nodes.sortBy.addEventListener("change", (event) => {
+                    state.sortBy = event.target.value;
+                    render();
+                });
+
+                nodes.openAddModalBtn.addEventListener("click", () => {
+                    openAddModal();
+                });
+
+                nodes.closeAddModalBtn.addEventListener("click", () => {
+                    closeAddModal(false);
+                });
+
+                nodes.cancelAddModalBtn.addEventListener("click", () => {
+                    closeAddModal(true);
+                });
+
+                nodes.closeEditModalBtn.addEventListener("click", () => {
+                    closeEditModal(false);
+                });
+
+                nodes.cancelEditModalBtn.addEventListener("click", () => {
+                    closeEditModal(true);
+                });
+
+                nodes.closeViewModalBtn.addEventListener("click", () => {
+                    closeViewModal();
+                });
+
+                nodes.dismissViewModalBtn.addEventListener("click", () => {
+                    closeViewModal();
+                });
+
+                nodes.addModal.addEventListener("click", (event) => {
+                    if (event.target === nodes.addModal) {
+                        closeAddModal(false);
+                    }
+                });
+
+                nodes.editModal.addEventListener("click", (event) => {
+                    if (event.target === nodes.editModal) {
+                        closeEditModal(false);
+                    }
+                });
+
+                nodes.viewModal.addEventListener("click", (event) => {
+                    if (event.target === nodes.viewModal) {
+                        closeViewModal();
+                    }
+                });
+
+                document.addEventListener("keydown", (event) => {
+                    if (event.key !== "Escape") {
+                        return;
+                    }
+
+                    if (!nodes.addModal.classList.contains("hidden")) {
+                        closeAddModal(false);
+                    }
+
+                    if (!nodes.editModal.classList.contains("hidden")) {
+                        closeEditModal(false);
+                    }
+
+                    if (!nodes.viewModal.classList.contains("hidden")) {
+                        closeViewModal();
+                    }
+                });
+
+                nodes.tableBody.addEventListener("change", (event) => {
+                    const action = event.target.dataset.action;
+                    const id = Number(event.target.dataset.id);
+
+                    if (!action || !id) {
+                        return;
+                    }
+
+                    if (action === "setPriority") {
+                        updateItem(id, (item) => ({
+                            ...item,
+                            priority: event.target.value,
+                        }));
+                    }
+                });
+
+                nodes.tableBody.addEventListener("click", (event) => {
+                    const action = event.target.dataset.action;
+                    const id = Number(event.target.dataset.id);
+
+                    if (!action || !id) {
+                        return;
+                    }
+
+                    if (action === "viewRow") {
+                        openViewModal(id);
+                    }
+
+                    if (action === "editRow") {
+                        openEditModal(id);
+                    }
+
+                    if (action === "deleteItem") {
+                        const shouldDelete = window.confirm(
+                            "Delete this item permanently?",
+                        );
+
+                        if (!shouldDelete) {
+                            return;
+                        }
+
+                        deleteItem(id);
+                    }
+                });
+
+                nodes.addForm.addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    const title = nodes.addTitle.value.trim();
+                    if (!title) {
+                        return;
+                    }
+
+                    const item = {
+                        id: Date.now(),
+                        title,
+                        description: nodes.addDescription.value.trim(),
+                        type: getSelectedRadioValue(
+                            nodes.addForm,
+                            "addType",
+                            "task",
+                        ),
+                        status: getSelectedRadioValue(
+                            nodes.addForm,
+                            "addStatus",
+                            "Todo",
+                        ),
+                        priority: getSelectedRadioValue(
+                            nodes.addForm,
+                            "addPriority",
+                            "medium",
+                        ),
+                        assignee:
+                            nodes.addAssignee.value.trim() || "Unassigned",
+                        createdAt: new Date().toISOString().slice(0, 10),
+                        done:
+                            getSelectedRadioValue(
+                                nodes.addForm,
+                                "addStatus",
+                                "Todo",
+                            ) === "Done",
+                    };
+
+                    state.items.unshift(item);
+                    nodes.addForm.reset();
+                    persist();
+                    render();
+                    closeAddModal(false);
+                });
+
+                nodes.editForm.addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    if (!state.editingItemId) {
+                        return;
+                    }
+
+                    const title = nodes.editTitle.value.trim();
+                    if (!title) {
+                        return;
+                    }
+
+                    updateItem(state.editingItemId, (item) => {
+                        const nextStatus = getSelectedRadioValue(
+                            nodes.editForm,
+                            "editStatus",
+                            item.status,
+                        );
+
+                        return {
+                            ...item,
+                            title,
+                            description: nodes.editDescription.value.trim(),
+                            type: getSelectedRadioValue(
+                                nodes.editForm,
+                                "editType",
+                                item.type,
+                            ),
+                            status: nextStatus,
+                            priority: getSelectedRadioValue(
+                                nodes.editForm,
+                                "editPriority",
+                                item.priority,
+                            ),
+                            assignee:
+                                nodes.editAssignee.value.trim() || "Unassigned",
+                            done: nextStatus === "Done",
+                        };
+                    });
+
+                    closeEditModal(false);
+                });
+
+                nodes.boardView.addEventListener("dragstart", (event) => {
+                    const card = event.target.closest(".card");
+                    if (!card) {
+                        return;
+                    }
+
+                    card.classList.add("dragging");
+                    event.dataTransfer.effectAllowed = "move";
+                    event.dataTransfer.setData(
+                        "text/plain",
+                        card.dataset.id || "",
+                    );
+                });
+
+                nodes.boardView.addEventListener("dragend", (event) => {
+                    const card = event.target.closest(".card");
+                    if (card) {
+                        card.classList.remove("dragging");
+                    }
+
+                    nodes.boardView
+                        .querySelectorAll(".column")
+                        .forEach((column) => {
+                            column.classList.remove("drop-target");
+                        });
+                });
+
+                nodes.boardView.addEventListener("dragover", (event) => {
+                    const column = event.target.closest(".column");
+                    if (!column) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "move";
+
+                    nodes.boardView
+                        .querySelectorAll(".column")
+                        .forEach((entry) => {
+                            entry.classList.remove("drop-target");
+                        });
+                    column.classList.add("drop-target");
+                });
+
+                nodes.boardView.addEventListener("drop", (event) => {
+                    const column = event.target.closest(".column");
+                    if (!column) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    const id = Number(event.dataTransfer.getData("text/plain"));
+                    const nextStatus = column.dataset.status;
+
+                    if (!id || !nextStatus) {
+                        return;
+                    }
+
+                    updateItem(id, (item) => ({
+                        ...item,
+                        status: nextStatus,
+                        done: nextStatus === "Done",
+                    }));
+                });
+
+                nodes.boardView.addEventListener("change", (event) => {
+                    if (event.target.dataset.action !== "columnSort") {
+                        return;
+                    }
+
+                    const status = event.target.dataset.status;
+                    if (!status) {
+                        return;
+                    }
+
+                    state.boardControls[status] = event.target.value;
+                    render();
+                });
+
+                nodes.boardView.addEventListener("submit", (event) => {
+                    const form = event.target.closest(
+                        "form[data-action='columnAdd']",
+                    );
+                    if (!form) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    const status = form.dataset.status;
+                    const input = form.querySelector("input[name='title']");
+
+                    if (!status || !input) {
+                        return;
+                    }
+
+                    const title = input.value.trim();
+                    if (!title) {
+                        return;
+                    }
+
+                    const item = {
+                        id: Date.now(),
+                        title,
+                        description: "",
+                        type: "task",
+                        status,
+                        priority: "medium",
+                        assignee: "Unassigned",
+                        createdAt: new Date().toISOString().slice(0, 10),
+                        done: status === "Done",
+                    };
+
+                    state.items.unshift(item);
+                    persist();
+                    render();
+                });
+
+                nodes.boardView.addEventListener("click", (event) => {
+                    if (event.target.dataset.action !== "deleteItem") {
+                        return;
+                    }
+
+                    const id = Number(event.target.dataset.id);
+                    if (!id) {
+                        return;
+                    }
+
+                    const shouldDelete = window.confirm(
+                        "Delete this item permanently?",
+                    );
+
+                    if (!shouldDelete) {
+                        return;
+                    }
+
+                    deleteItem(id);
+                });
+            }
+
+            async function bootstrap() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+
+                if (saved) {
+                    const cached = JSON.parse(saved);
+                    state.title = cached.title || state.title;
+                    state.items = Array.isArray(cached.items)
+                        ? cached.items
+                        : [];
+                    state.boardControls = {
+                        ...state.boardControls,
+                        ...(cached.boardControls || {}),
+                    };
+                    nodes.title.textContent = state.title;
+                    registerEvents();
+                    render();
+                    return;
+                }
+
+                const response = await fetch("tasks.json");
+                const data = await response.json();
+                const normalized = normalizeIncomingData(data);
+
+                state.title = normalized.title;
+                state.items = normalized.items;
+                nodes.title.textContent = state.title;
+
+                persist();
+                registerEvents();
+                render();
+            }
+
+            bootstrap().catch(() => {
+                nodes.title.textContent = "Unable to load tasks.json";
+            });
+        </script>
+    </body>
+</html>

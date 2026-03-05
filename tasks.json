@@ -1,0 +1,71 @@
+{
+    "title": "Product Build Database",
+    "items": [
+        {
+            "id": 1,
+            "title": "Set up project skeleton",
+            "description": "Initialize Laravel app structure and baseline environments.",
+            "type": "task",
+            "status": "Done",
+            "priority": "medium",
+            "assignee": "Monica",
+            "createdAt": "2026-02-24",
+            "done": true
+        },
+        {
+            "id": 2,
+            "title": "Design auth flow",
+            "description": "Map login, registration, reset password, and verification screens.",
+            "type": "feature",
+            "status": "In Progress",
+            "priority": "high",
+            "assignee": "Ali",
+            "createdAt": "2026-02-26",
+            "done": false
+        },
+        {
+            "id": 3,
+            "title": "Fix double-submit in login form",
+            "description": "Prevent duplicate form submit events while auth request is pending.",
+            "type": "bug",
+            "status": "Todo",
+            "priority": "high",
+            "assignee": "Priya",
+            "createdAt": "2026-02-27",
+            "done": false
+        },
+        {
+            "id": 4,
+            "title": "Build dashboard table pagination",
+            "description": "Add server-side pagination and keep filters in query state.",
+            "type": "feature",
+            "status": "In Progress",
+            "priority": "medium",
+            "assignee": "Jamal",
+            "createdAt": "2026-03-01",
+            "done": false
+        },
+        {
+            "id": 5,
+            "title": "Write smoke tests for auth",
+            "description": "Cover login success/failure and basic route protection checks.",
+            "type": "task",
+            "status": "Todo",
+            "priority": "low",
+            "assignee": "Mina",
+            "createdAt": "2026-03-02",
+            "done": false
+        },
+        {
+            "id": 6,
+            "title": "Resolve board flicker when filtering",
+            "description": "Stabilize board rendering while switching filters quickly.",
+            "type": "bug",
+            "status": "Done",
+            "priority": "low",
+            "assignee": "Chris",
+            "createdAt": "2026-03-03",
+            "done": true
+        }
+    ]
+}
