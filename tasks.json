@@ -1,4 +1,5 @@
 {
+    "$schema": "./tasks.schema.json",
     "title": "Product Build Database",
     "items": [
         {
@@ -9,8 +10,7 @@
             "status": "Done",
             "priority": "medium",
             "assignee": "Monica",
-            "createdAt": "2026-02-24",
-            "done": true
+            "createdAt": "2026-02-24"
         },
         {
             "id": 2,
@@ -20,8 +20,7 @@
             "status": "In Progress",
             "priority": "high",
             "assignee": "Ali",
-            "createdAt": "2026-02-26",
-            "done": false
+            "createdAt": "2026-02-26"
         },
         {
             "id": 3,
@@ -31,8 +30,7 @@
             "status": "Todo",
             "priority": "high",
             "assignee": "Priya",
-            "createdAt": "2026-02-27",
-            "done": false
+            "createdAt": "2026-02-27"
         },
         {
             "id": 4,
@@ -42,8 +40,7 @@
             "status": "In Progress",
             "priority": "medium",
             "assignee": "Jamal",
-            "createdAt": "2026-03-01",
-            "done": false
+            "createdAt": "2026-03-01"
         },
         {
             "id": 5,
@@ -53,8 +50,7 @@
             "status": "Todo",
             "priority": "low",
             "assignee": "Mina",
-            "createdAt": "2026-03-02",
-            "done": false
+            "createdAt": "2026-03-02"
         },
         {
             "id": 6,
@@ -64,8 +60,7 @@
             "status": "Done",
             "priority": "low",
             "assignee": "Chris",
-            "createdAt": "2026-03-03",
-            "done": true
+            "createdAt": "2026-03-03"
         }
     ]
 }

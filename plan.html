@@ -1319,22 +1319,18 @@
 
                 const normalizedItems = sourceItems.map((item, index) => {
                     const text = item.text || item.title || "Untitled";
-                    const done =
-                        typeof item.done === "boolean"
-                            ? item.done
-                            : item.status === "Done";
+                    const status = item.status || "Todo";
                     return {
                         id: item.id || Date.now() + index,
                         title: text,
                         description: item.description || "",
                         type: item.type || "task",
-                        status: item.status || (done ? "Done" : "Todo"),
+                        status,
                         priority: item.priority || "medium",
                         assignee: item.assignee || "Unassigned",
                         createdAt:
                             item.createdAt ||
                             new Date().toISOString().slice(0, 10),
-                        done,
                     };
                 });
 
@@ -1346,6 +1342,10 @@
 
             function toClassToken(value) {
                 return String(value).replace(/\s+/g, "");
+            }
+
+            function isDone(item) {
+                return item.status === "Done";
             }
 
             function getStatusClass(status) {
@@ -1441,7 +1441,7 @@
                     feature: items.filter((item) => item.type === "feature")
                         .length,
                     bug: items.filter((item) => item.type === "bug").length,
-                    done: items.filter((item) => item.done).length,
+                    done: items.filter((item) => isDone(item)).length,
                 };
 
                 nodes.summaryChips.innerHTML = "";
@@ -1479,7 +1479,7 @@
 
                     row.innerHTML = `
                         <td>
-                            <div class="title-cell ${item.done ? "is-done" : ""}">
+                            <div class="title-cell ${isDone(item) ? "is-done" : ""}">
                                 <span class="status-dot dot-${toClassToken(item.status)}"></span>
                                 <span class="table-text">${safeTitle}</span>
                             </div>
@@ -1573,7 +1573,7 @@
                         const safeAssignee = escapeHtml(item.assignee);
                         card.innerHTML = `
                             <div class="card-head">
-                                <span class="card-title ${item.done ? "is-done" : ""}">${safeTitle}</span>
+                                <span class="card-title ${isDone(item) ? "is-done" : ""}">${safeTitle}</span>
                                 <button class="danger-button" type="button" data-action="deleteItem" data-id="${item.id}">Delete</button>
                             </div>
                             ${safeDescription ? `<p class="card-desc">${safeDescription}</p>` : ""}
@@ -1932,12 +1932,6 @@
                         assignee:
                             nodes.addAssignee.value.trim() || "Unassigned",
                         createdAt: new Date().toISOString().slice(0, 10),
-                        done:
-                            getSelectedRadioValue(
-                                nodes.addForm,
-                                "addStatus",
-                                "Todo",
-                            ) === "Done",
                     };
 
                     state.items.unshift(item);
@@ -1983,7 +1977,6 @@
                             ),
                             assignee:
                                 nodes.editAssignee.value.trim() || "Unassigned",
-                            done: nextStatus === "Done",
                         };
                     });
 
@@ -2051,7 +2044,6 @@
                     updateItem(id, (item) => ({
                         ...item,
                         status: nextStatus,
-                        done: nextStatus === "Done",
                     }));
                 });
 
@@ -2099,7 +2091,6 @@
                         priority: "medium",
                         assignee: "Unassigned",
                         createdAt: new Date().toISOString().slice(0, 10),
-                        done: status === "Done",
                     };
 
                     state.items.unshift(item);

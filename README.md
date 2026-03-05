@@ -1,12 +1,15 @@
 # Agent Code Plan
 
 Single-page project planning board with two views:
+
 - Table view for detailed editing
 - Kanban board view with drag-and-drop
 
 The app is implemented as static files:
+
 - `plan.html` (UI, styles, and logic)
 - `tasks.json` (seed data)
+- `tasks.schema.json` (JSON schema contract for `tasks.json`)
 
 ## Features
 
@@ -25,6 +28,7 @@ The app is implemented as static files:
 This project is built with the expectation that you run it using the VS Code **Live Server** extension.
 
 Steps:
+
 1. Install the **Live Server** extension in VS Code.
 2. Open this project folder in VS Code.
 3. Right-click `plan.html` and choose **Open with Live Server**.
@@ -36,24 +40,27 @@ Steps:
 
 ```json
 {
-  "title": "Project Build Database",
-  "items": [
-    {
-      "id": 1,
-      "title": "Task title",
-      "description": "Details",
-      "type": "task",
-      "status": "Todo",
-      "priority": "medium",
-      "assignee": "Name",
-      "createdAt": "2026-03-05",
-      "done": false
-    }
-  ]
+    "$schema": "./tasks.schema.json",
+    "title": "Project Build Database",
+    "items": [
+        {
+            "id": 1,
+            "title": "Task title",
+            "description": "Details",
+            "type": "task",
+            "status": "Todo",
+            "priority": "medium",
+            "assignee": "Name",
+            "createdAt": "2026-03-05"
+        }
+    ]
 }
 ```
 
+`$schema` is intentionally placed at the top of `tasks.json` so editors and agents can validate task edits against `tasks.schema.json`.
+
 Allowed values:
+
 - `type`: `task`, `feature`, `bug`
 - `status`: `Todo`, `In Progress`, `Done`
 - `priority`: `low`, `medium`, `high`
