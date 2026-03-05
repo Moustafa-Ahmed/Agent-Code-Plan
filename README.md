@@ -26,8 +26,8 @@ Full CRUD via modals — add, edit, view, and delete items. Table rows support i
 
 Requires Node.js.
 
-1. Open `plan.html` with the **Live Server** VS Code extension.
-2. Create `.vscode/tasks.json` in this project with the content below, then re-open the folder. VS Code will prompt _"Allow automatic tasks?"_ once — allow it, and `server.js` starts silently on every folder open, writing UI changes directly to `tasks.json`.
+1. Create `.vscode/tasks.json` in this project with the content below, then re-open the folder. VS Code will prompt _"Allow automatic tasks?"_ once — allow it, and `server.js` starts silently on every folder open.
+2. Open `http://localhost:47821` in your browser.
 
 ```json
 {
@@ -36,7 +36,7 @@ Requires Node.js.
         {
             "label": "Start Tracker Server",
             "type": "shell",
-            "command": "node server.js",
+            "command": "node server.js", //replace this with the location of your server.js file
             "options": {
                 "cwd": "${workspaceFolder}"
             },
