@@ -49,9 +49,9 @@
             }
 
             .shell {
-                max-width: 1180px;
-                margin: 28px auto;
-                padding: 0 16px;
+                max-width: 1420px;
+                margin: 0 auto;
+                padding: 28px 16px;
             }
 
             .header {
@@ -90,12 +90,42 @@
             }
 
             .chip {
-                border-radius: 999px;
+                border-radius: 7px;
                 border: 1px solid #d5dff2;
                 background: #fff;
-                padding: 6px 10px;
+                padding: 5px 10px 5px 26px;
                 font-size: 0.8rem;
+                font-weight: 500;
                 color: #31405d;
+                position: relative;
+            }
+
+            .chip::before {
+                content: "";
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 7px;
+                height: 7px;
+                border-radius: 999px;
+                background: #8ea7d8;
+            }
+
+            .chips .chip:nth-child(1)::before {
+                background: #8ea7d8;
+            }
+            .chips .chip:nth-child(2)::before {
+                background: #375ea3;
+            }
+            .chips .chip:nth-child(3)::before {
+                background: #246844;
+            }
+            .chips .chip:nth-child(4)::before {
+                background: #8f2a2a;
+            }
+            .chips .chip:nth-child(5)::before {
+                background: #1f9254;
             }
 
             .panel {
@@ -107,19 +137,38 @@
             }
 
             .toolbar {
-                padding: 14px;
                 border-bottom: 1px solid var(--line);
-                display: grid;
-                grid-template-columns: repeat(12, 1fr);
+            }
+
+            .toolbar-main {
+                display: flex;
+                align-items: center;
                 gap: 10px;
+                padding: 12px 14px;
+                border-bottom: 1px solid #edf1f9;
             }
 
-            .group {
-                grid-column: span 3;
+            .toolbar-search {
+                flex: 1;
             }
 
-            .group-wide {
-                grid-column: span 6;
+            .toolbar-filters {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 14px;
+                background: #f8faff;
+            }
+
+            .toolbar-filters .select {
+                width: auto;
+                flex: 0 0 auto;
+                min-width: 130px;
+            }
+
+            .sort-select {
+                min-width: 160px;
+                margin-left: auto;
             }
 
             .view-toggle {
@@ -160,6 +209,26 @@
                 padding: 8px 10px;
                 background: #fff;
                 color: var(--ink);
+                transition:
+                    border-color 0.15s,
+                    box-shadow 0.15s;
+            }
+
+            .input:focus,
+            .select:focus,
+            .add-input:focus {
+                outline: none;
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.12);
+            }
+
+            .select {
+                appearance: none;
+                -webkit-appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7a99' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 10px center;
+                padding-right: 28px;
             }
 
             .table-wrap {
@@ -169,7 +238,7 @@
             table {
                 border-collapse: collapse;
                 width: 100%;
-                min-width: 980px;
+                min-width: 1360px;
             }
 
             th,
@@ -183,11 +252,23 @@
 
             th {
                 background: #fafcff;
-                font-size: 0.85rem;
-                color: #4f607f;
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: #6b7a99;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
                 position: sticky;
                 top: 0;
                 z-index: 1;
+                border-bottom: 2px solid #e4eaf6;
+            }
+
+            tbody tr {
+                transition: background 0.1s;
+            }
+
+            tbody tr:hover td {
+                background: #f5f8ff;
             }
 
             .title-cell {
@@ -231,54 +312,71 @@
 
             .status-radio-group {
                 display: inline-flex;
-                gap: 6px;
+                gap: 4px;
                 align-items: center;
             }
 
             .status-option {
                 display: inline-flex;
                 align-items: center;
-                gap: 5px;
-                border: 1px solid #d3dced;
+                gap: 4px;
+                border: 1px solid #dde4ee;
                 border-radius: 999px;
                 padding: 4px 8px;
                 font-size: 0.74rem;
                 cursor: pointer;
                 line-height: 1;
+                background: transparent;
+                color: #9ba6bc;
+                transition:
+                    background 0.12s,
+                    color 0.12s,
+                    border-color 0.12s;
+                user-select: none;
             }
 
             .status-option input[type="radio"] {
                 margin: 0;
+                width: 0;
+                height: 0;
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
             }
 
-            .status-todo {
+            .status-option:hover.status-todo {
                 color: #5c6375;
-                background: #f2f4f8;
-                border-color: #d8dde9;
+                background: #eef0f4;
+                border-color: #cdd3df;
             }
-
-            .status-todo input[type="radio"] {
-                accent-color: #7e8599;
-            }
-
-            .status-in-progress {
+            .status-option:hover.status-in-progress {
                 color: #8e6200;
-                background: #fff4df;
+                background: #fff8ec;
                 border-color: #f1d29b;
             }
-
-            .status-in-progress input[type="radio"] {
-                accent-color: #e0a019;
-            }
-
-            .status-done {
+            .status-option:hover.status-done {
                 color: #1f7b4b;
-                background: #e8f7ef;
+                background: #f0fbf5;
                 border-color: #bfe7d0;
             }
 
-            .status-done input[type="radio"] {
-                accent-color: #2a9e61;
+            .status-option.status-todo:has(input:checked) {
+                color: #5c6375;
+                background: #f2f4f8;
+                border-color: #c8cdd9;
+                font-weight: 600;
+            }
+            .status-option.status-in-progress:has(input:checked) {
+                color: #8e6200;
+                background: #fff4df;
+                border-color: #f1d29b;
+                font-weight: 600;
+            }
+            .status-option.status-done:has(input:checked) {
+                color: #1f7b4b;
+                background: #e8f7ef;
+                border-color: #bfe7d0;
+                font-weight: 600;
             }
 
             .pill {
@@ -335,10 +433,26 @@
 
             .column h3 {
                 margin: 0 0 10px;
-                font-size: 0.92rem;
+                font-size: 0.88rem;
+                font-weight: 600;
                 color: #3d4b69;
                 display: flex;
+                align-items: center;
                 justify-content: space-between;
+            }
+
+            .column h3 span:last-child {
+                background: var(--accent-soft);
+                color: var(--accent);
+                font-size: 0.75rem;
+                font-weight: 700;
+                min-width: 22px;
+                height: 22px;
+                border-radius: 999px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 7px;
             }
 
             .column-controls {
@@ -394,6 +508,11 @@
                     box-shadow 0.15s ease;
             }
 
+            .card:hover {
+                box-shadow: 0 4px 16px rgba(30, 50, 100, 0.1);
+                border-color: #c0d4f4;
+            }
+
             .card:active {
                 cursor: grabbing;
             }
@@ -443,6 +562,12 @@
                 margin-bottom: 6px;
             }
 
+            .card-actions {
+                display: flex;
+                gap: 4px;
+                flex-shrink: 0;
+            }
+
             .danger-button {
                 border: 1px solid #f2c5c5;
                 border-radius: 8px;
@@ -477,8 +602,26 @@
                 background: var(--accent);
                 color: #fff;
                 border-radius: 10px;
-                padding: 9px 14px;
+                padding: 9px 18px;
                 cursor: pointer;
+                font-weight: 600;
+                letter-spacing: 0.01em;
+                box-shadow: 0 2px 8px rgba(31, 111, 235, 0.25);
+                transition:
+                    background 0.15s,
+                    box-shadow 0.15s,
+                    transform 0.1s;
+            }
+
+            .add-button:hover {
+                background: #1a5fd0;
+                box-shadow: 0 4px 14px rgba(31, 111, 235, 0.38);
+                transform: translateY(-1px);
+            }
+
+            .add-button:active {
+                transform: translateY(0);
+                box-shadow: 0 1px 4px rgba(31, 111, 235, 0.25);
             }
 
             .modal {
@@ -633,23 +776,124 @@
             }
 
             .table-text {
-                max-width: 260px;
+                max-width: 200px;
                 white-space: normal;
                 line-height: 1.35;
             }
 
-            .status-badge {
-                display: inline-flex;
-                align-items: center;
-                border: 1px solid #d3dced;
-                border-radius: 999px;
-                padding: 4px 8px;
-                font-size: 0.78rem;
-                line-height: 1;
+            .desc-text {
+                max-width: 220px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                white-space: normal;
+                line-height: 1.4;
+                color: #4a5570;
             }
 
-            .priority-select {
-                min-width: 106px;
+            .priority-radio-group {
+                display: inline-flex;
+                gap: 4px;
+                align-items: center;
+            }
+
+            .priority-option {
+                display: inline-flex;
+                align-items: center;
+                border: 1px solid #dde4ee;
+                border-radius: 999px;
+                padding: 4px 8px;
+                font-size: 0.74rem;
+                cursor: pointer;
+                line-height: 1;
+                background: transparent;
+                color: #9ba6bc;
+                transition:
+                    background 0.12s,
+                    color 0.12s,
+                    border-color 0.12s;
+                user-select: none;
+            }
+
+            .priority-option input[type="radio"] {
+                margin: 0;
+                width: 0;
+                height: 0;
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .priority-option:hover.priority-low {
+                color: #1f7b4b;
+                background: #f0fbf5;
+                border-color: #bfe7d0;
+            }
+            .priority-option:hover.priority-medium {
+                color: #8e6200;
+                background: #fff8ec;
+                border-color: #f1d29b;
+            }
+            .priority-option:hover.priority-high {
+                color: #8f2a2a;
+                background: #fff5f5;
+                border-color: #f4d0d0;
+            }
+
+            .priority-option.priority-low:has(input:checked) {
+                color: #1f7b4b;
+                background: #e8f7ef;
+                border-color: #bfe7d0;
+                font-weight: 600;
+            }
+            .priority-option.priority-medium:has(input:checked) {
+                color: #8e6200;
+                background: #fff4df;
+                border-color: #f1d29b;
+                font-weight: 600;
+            }
+            .priority-option.priority-high:has(input:checked) {
+                color: #8f2a2a;
+                background: #fff1f1;
+                border-color: #f4d0d0;
+                font-weight: 600;
+            }
+
+            .icon-button {
+                border: 1px solid #d6deee;
+                border-radius: 7px;
+                background: #fff;
+                color: #5a6b87;
+                width: 30px;
+                height: 30px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                padding: 0;
+                flex-shrink: 0;
+                transition:
+                    background 0.12s,
+                    border-color 0.12s,
+                    color 0.12s;
+            }
+
+            .icon-button:hover {
+                background: #eef3ff;
+                border-color: #b6c8f2;
+                color: var(--accent);
+            }
+
+            .icon-button.icon-danger {
+                color: #992a2a;
+                border-color: #f2c5c5;
+                background: #fff3f3;
+            }
+
+            .icon-button.icon-danger:hover {
+                background: #ffe8e8;
+                border-color: #e8a0a0;
             }
 
             .action-button {
@@ -657,15 +901,30 @@
                 border-radius: 8px;
                 background: #fff;
                 color: #41506f;
-                padding: 5px 8px;
+                padding: 5px 9px;
                 font-size: 0.75rem;
+                font-weight: 500;
                 line-height: 1;
                 cursor: pointer;
+                transition:
+                    background 0.12s,
+                    border-color 0.12s;
+            }
+
+            .action-button:hover {
+                background: #eef3ff;
+                border-color: #b6c8f2;
+            }
+
+            .danger-button:hover {
+                background: #ffe8e8;
+                border-color: #e8a0a0;
             }
 
             .actions-cell {
                 display: flex;
-                gap: 6px;
+                gap: 5px;
+                align-items: center;
             }
 
             .view-grid {
@@ -749,11 +1008,6 @@
             }
 
             @media (max-width: 960px) {
-                .group,
-                .group-wide {
-                    grid-column: span 6;
-                }
-
                 .board {
                     grid-template-columns: 1fr;
                 }
@@ -768,14 +1022,33 @@
                 }
             }
 
-            @media (max-width: 620px) {
-                .toolbar {
-                    grid-template-columns: repeat(6, 1fr);
+            @media (max-width: 720px) {
+                .toolbar-filters {
+                    flex-wrap: wrap;
                 }
 
-                .group,
-                .group-wide {
-                    grid-column: span 6;
+                .toolbar-filters .select {
+                    flex: 1 1 calc(50% - 8px);
+                }
+
+                .sort-select {
+                    flex: 1 1 100%;
+                    margin-left: 0;
+                    max-width: none;
+                }
+            }
+
+            @media (max-width: 620px) {
+                .toolbar-main {
+                    flex-wrap: wrap;
+                }
+
+                .view-toggle {
+                    flex-shrink: 0;
+                }
+
+                .toolbar-search {
+                    flex: 1 1 100%;
                 }
 
                 .chips {
@@ -807,7 +1080,7 @@
 
             <section class="panel">
                 <div class="toolbar">
-                    <div class="group">
+                    <div class="toolbar-main">
                         <div
                             class="view-toggle"
                             role="tablist"
@@ -828,56 +1101,43 @@
                                 Board
                             </button>
                         </div>
-                    </div>
-
-                    <div class="group-wide">
                         <input
                             id="searchInput"
-                            class="input"
+                            class="input toolbar-search"
                             type="search"
                             placeholder="Search title or assignee"
                         />
                     </div>
-
-                    <div class="group">
+                    <div class="toolbar-filters">
                         <select id="typeFilter" class="select">
                             <option value="all">All Types</option>
                             <option value="task">Task</option>
                             <option value="feature">Feature</option>
                             <option value="bug">Bug</option>
                         </select>
-                    </div>
-
-                    <div class="group">
                         <select id="statusFilter" class="select">
                             <option value="all">All Status</option>
                             <option value="Todo">Todo</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Done">Done</option>
                         </select>
-                    </div>
-
-                    <div class="group">
                         <select id="priorityFilter" class="select">
                             <option value="all">All Priorities</option>
                             <option value="high">High</option>
                             <option value="medium">Medium</option>
                             <option value="low">Low</option>
                         </select>
-                    </div>
-
-                    <div class="group">
-                        <select id="sortBy" class="select">
-                            <option value="createdAt-desc">Newest</option>
-                            <option value="createdAt-asc">Oldest</option>
+                        <select id="sortBy" class="select sort-select">
+                            <option value="createdAt-desc">Newest first</option>
+                            <option value="createdAt-asc">Oldest first</option>
                             <option value="priority-desc">
-                                Priority High-Low
+                                Priority High → Low
                             </option>
                             <option value="priority-asc">
-                                Priority Low-High
+                                Priority Low → High
                             </option>
-                            <option value="title-asc">Title A-Z</option>
-                            <option value="title-desc">Title Z-A</option>
+                            <option value="title-asc">Title A → Z</option>
+                            <option value="title-desc">Title Z → A</option>
                         </select>
                     </div>
                 </div>
@@ -908,7 +1168,7 @@
                         class="add-button"
                         type="button"
                     >
-                        Add New Item
+                        + Add New Item
                     </button>
                 </div>
             </section>
@@ -1320,7 +1580,7 @@
                 const normalizedItems = sourceItems.map((item, index) => {
                     const text = item.text || item.title || "Untitled";
                     const status = item.status || "Todo";
-                    return {
+                    const normalized = {
                         id: item.id || Date.now() + index,
                         title: text,
                         description: item.description || "",
@@ -1332,6 +1592,10 @@
                             item.createdAt ||
                             new Date().toISOString().slice(0, 10),
                     };
+                    if (item.updatedAt) {
+                        normalized.updatedAt = item.updatedAt;
+                    }
+                    return normalized;
                 });
 
                 return {
@@ -1371,8 +1635,8 @@
 
             function persist() {
                 const payload = {
-                    title: state.title,
-                    items: state.items,
+                    view: state.view,
+                    sortBy: state.sortBy,
                     boardControls: state.boardControls,
                 };
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -1444,13 +1708,17 @@
                     done: items.filter((item) => isDone(item)).length,
                 };
 
+                const pct =
+                    totals.all > 0
+                        ? Math.round((totals.done / totals.all) * 100)
+                        : 0;
                 nodes.summaryChips.innerHTML = "";
                 [
                     `All: ${totals.all}`,
                     `Tasks: ${totals.task}`,
                     `Features: ${totals.feature}`,
                     `Bugs: ${totals.bug}`,
-                    `Done: ${totals.done}`,
+                    `Done: ${totals.done}/${totals.all} (${pct}%)`,
                 ].forEach((label) => {
                     const chip = document.createElement("span");
                     chip.className = "chip";
@@ -1475,7 +1743,6 @@
                     const safeTitle = escapeHtml(item.title);
                     const safeDescription = escapeHtml(item.description || "");
                     const safeAssignee = escapeHtml(item.assignee);
-                    const statusClass = getStatusClass(item.status);
 
                     row.innerHTML = `
                         <td>
@@ -1485,27 +1752,57 @@
                             </div>
                         </td>
                         <td>
-                            <span class="table-text">${safeDescription || "-"}</span>
+                            <span class="desc-text">${safeDescription || "—"}</span>
                         </td>
                         <td>
                             <span class="pill type-${item.type}">${item.type}</span>
                         </td>
                         <td>
-                            <span class="status-badge ${statusClass}">${item.status}</span>
+                            <div class="status-radio-group">
+                                <label class="status-option status-todo">
+                                    <input type="radio" name="status-${item.id}" value="Todo" data-action="setStatus" data-id="${item.id}" ${item.status === "Todo" ? "checked" : ""} />
+                                    <span>Todo</span>
+                                </label>
+                                <label class="status-option status-in-progress">
+                                    <input type="radio" name="status-${item.id}" value="In Progress" data-action="setStatus" data-id="${item.id}" ${item.status === "In Progress" ? "checked" : ""} />
+                                    <span>In Progress</span>
+                                </label>
+                                <label class="status-option status-done">
+                                    <input type="radio" name="status-${item.id}" value="Done" data-action="setStatus" data-id="${item.id}" ${item.status === "Done" ? "checked" : ""} />
+                                    <span>Done</span>
+                                </label>
+                            </div>
                         </td>
                         <td>
-                            <select class="select priority-select" data-action="setPriority" data-id="${item.id}">
-                                <option value="low" ${item.priority === "low" ? "selected" : ""}>low</option>
-                                <option value="medium" ${item.priority === "medium" ? "selected" : ""}>medium</option>
-                                <option value="high" ${item.priority === "high" ? "selected" : ""}>high</option>
-                            </select>
+                            <div class="priority-radio-group">
+                                <label class="priority-option priority-low">
+                                    <input type="radio" name="priority-${item.id}" value="low" data-action="setPriority" data-id="${item.id}" ${item.priority === "low" ? "checked" : ""} />
+                                    <span>Low</span>
+                                </label>
+                                <label class="priority-option priority-medium">
+                                    <input type="radio" name="priority-${item.id}" value="medium" data-action="setPriority" data-id="${item.id}" ${item.priority === "medium" ? "checked" : ""} />
+                                    <span>Med</span>
+                                </label>
+                                <label class="priority-option priority-high">
+                                    <input type="radio" name="priority-${item.id}" value="high" data-action="setPriority" data-id="${item.id}" ${item.priority === "high" ? "checked" : ""} />
+                                    <span>High</span>
+                                </label>
+                            </div>
                         </td>
                         <td>${safeAssignee}</td>
                         <td>${item.createdAt}</td>
-                        <td class="actions-cell">
-                            <button class="action-button" type="button" data-action="viewRow" data-id="${item.id}">View</button>
-                            <button class="action-button" type="button" data-action="editRow" data-id="${item.id}">Edit</button>
-                            <button class="danger-button" type="button" data-action="deleteItem" data-id="${item.id}">Delete</button>
+                        <td>
+                            <div class="actions-cell">
+                            <button class="icon-button" type="button" data-action="viewRow" data-id="${item.id}" title="View">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                            <button class="icon-button" type="button" data-action="editRow" data-id="${item.id}" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                            </button>
+                            <button class="icon-button icon-danger" type="button" data-action="deleteItem" data-id="${item.id}" title="Delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                            </button>
+                            </div>
                         </td>
                     `;
                     nodes.tableBody.appendChild(row);
@@ -1574,7 +1871,11 @@
                         card.innerHTML = `
                             <div class="card-head">
                                 <span class="card-title ${isDone(item) ? "is-done" : ""}">${safeTitle}</span>
-                                <button class="danger-button" type="button" data-action="deleteItem" data-id="${item.id}">Delete</button>
+                                <div class="card-actions">
+                                    <button class="action-button" type="button" data-action="viewRow" data-id="${item.id}">View</button>
+                                    <button class="action-button" type="button" data-action="editRow" data-id="${item.id}">Edit</button>
+                                    <button class="danger-button" type="button" data-action="deleteItem" data-id="${item.id}">Delete</button>
+                                </div>
                             </div>
                             ${safeDescription ? `<p class="card-desc">${safeDescription}</p>` : ""}
                             <div class="card-meta">
@@ -1704,6 +2005,9 @@
                 const safePriority = escapeHtml(item.priority);
                 const safeAssignee = escapeHtml(item.assignee || "Unassigned");
                 const safeCreatedAt = escapeHtml(item.createdAt);
+                const safeUpdatedAt = item.updatedAt
+                    ? escapeHtml(item.updatedAt)
+                    : null;
                 const statusClass = getStatusClass(item.status);
 
                 nodes.viewContent.innerHTML = `
@@ -1725,6 +2029,7 @@
                             <span class="view-key">Created</span>
                             <span class="view-value">${safeCreatedAt}</span>
                         </div>
+                        ${safeUpdatedAt ? `<div class="view-row"><span class="view-key">Updated</span><span class="view-value">${safeUpdatedAt}</span></div>` : ""}
                         <div class="view-row">
                             <span class="view-key">Item ID</span>
                             <span class="view-value">${item.id}</span>
@@ -1871,6 +2176,14 @@
                             priority: event.target.value,
                         }));
                     }
+
+                    if (action === "setStatus") {
+                        updateItem(id, (item) => ({
+                            ...item,
+                            status: event.target.value,
+                            updatedAt: new Date().toISOString().slice(0, 10),
+                        }));
+                    }
                 });
 
                 nodes.tableBody.addEventListener("click", (event) => {
@@ -1977,6 +2290,7 @@
                             ),
                             assignee:
                                 nodes.editAssignee.value.trim() || "Unassigned",
+                            updatedAt: new Date().toISOString().slice(0, 10),
                         };
                     });
 
@@ -2099,24 +2413,34 @@
                 });
 
                 nodes.boardView.addEventListener("click", (event) => {
-                    if (event.target.dataset.action !== "deleteItem") {
-                        return;
-                    }
-
+                    const action = event.target.dataset.action;
                     const id = Number(event.target.dataset.id);
-                    if (!id) {
+
+                    if (!action || !id) {
                         return;
                     }
 
-                    const shouldDelete = window.confirm(
-                        "Delete this item permanently?",
-                    );
-
-                    if (!shouldDelete) {
+                    if (action === "viewRow") {
+                        openViewModal(id);
                         return;
                     }
 
-                    deleteItem(id);
+                    if (action === "editRow") {
+                        openEditModal(id);
+                        return;
+                    }
+
+                    if (action === "deleteItem") {
+                        const shouldDelete = window.confirm(
+                            "Delete this item permanently?",
+                        );
+
+                        if (!shouldDelete) {
+                            return;
+                        }
+
+                        deleteItem(id);
+                    }
                 });
             }
 
@@ -2125,18 +2449,17 @@
 
                 if (saved) {
                     const cached = JSON.parse(saved);
-                    state.title = cached.title || state.title;
-                    state.items = Array.isArray(cached.items)
-                        ? cached.items
-                        : [];
                     state.boardControls = {
                         ...state.boardControls,
                         ...(cached.boardControls || {}),
                     };
-                    nodes.title.textContent = state.title;
-                    registerEvents();
-                    render();
-                    return;
+                    if (cached.view) {
+                        state.view = cached.view;
+                    }
+                    if (cached.sortBy) {
+                        state.sortBy = cached.sortBy;
+                        nodes.sortBy.value = cached.sortBy;
+                    }
                 }
 
                 const response = await fetch("tasks.json");
@@ -2147,7 +2470,6 @@
                 state.items = normalized.items;
                 nodes.title.textContent = state.title;
 
-                persist();
                 registerEvents();
                 render();
             }
