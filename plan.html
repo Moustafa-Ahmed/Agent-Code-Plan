@@ -2223,6 +2223,7 @@
             const STORAGE_KEY = "project-database-v1";
             const state = {
                 title: "Project Database",
+                schema: null,
                 items: [],
                 editingItemId: null,
                 view: "table",
@@ -2338,6 +2339,21 @@
                     .replace(/'/g, "&#39;");
             }
 
+            function saveItems() {
+                const payload = {
+                    ...(state.schema ? { $schema: state.schema } : {}),
+                    title: state.title,
+                    items: state.items,
+                };
+                fetch("/tasks.json", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload, null, 4),
+                }).catch(() => {
+                    /* server may not be running */
+                });
+            }
+
             function persist() {
                 const payload = {
                     view: state.view,
@@ -2345,6 +2361,7 @@
                     boardControls: state.boardControls,
                 };
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+                saveItems();
             }
 
             function sortRecords(items, sortBy) {
@@ -3175,6 +3192,7 @@
                 const data = await response.json();
                 const normalized = normalizeIncomingData(data);
 
+                state.schema = data["$schema"] || null;
                 state.title = normalized.title;
                 state.items = normalized.items;
                 nodes.title.textContent = state.title;
