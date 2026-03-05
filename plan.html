@@ -2620,8 +2620,10 @@
                 });
 
                 nodes.tableBody.addEventListener("click", (event) => {
-                    const action = event.target.dataset.action;
-                    const id = Number(event.target.dataset.id);
+                    const el = event.target.closest("[data-action]");
+                    if (!el) return;
+                    const action = el.dataset.action;
+                    const id = Number(el.dataset.id);
 
                     if (!action || !id) {
                         return;
@@ -2846,8 +2848,10 @@
                 });
 
                 nodes.boardView.addEventListener("click", (event) => {
-                    const action = event.target.dataset.action;
-                    const id = Number(event.target.dataset.id);
+                    const el = event.target.closest("[data-action]");
+                    if (!el) return;
+                    const action = el.dataset.action;
+                    const id = Number(el.dataset.id);
 
                     if (!action || !id) {
                         return;
