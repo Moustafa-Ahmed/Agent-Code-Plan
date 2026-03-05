@@ -24,29 +24,10 @@ Full CRUD via modals — add, edit, view, and delete items. Table rows support i
 
 ## Run Locally
 
-### Option A — Live Server (read-only UI)
+Requires Node.js.
 
-1. Install the **Live Server** extension in VS Code.
-2. Open this project folder in VS Code.
-3. Right-click `plan.html` → **Open with Live Server**.
-
-UI edits (add, edit, delete) are held in memory for the current session only — they are not written back to `tasks.json`. Use this option when you only need to view agent-written data.
-
-### Option B — Node server (edits write directly to `tasks.json`)
-
-Requires Node.js. The included `server.js` serves the app on `http://127.0.0.1:47821` and handles `POST /tasks.json` to persist UI changes immediately without an export step.
-
-**Start manually:**
-
-```bash
-node server.js
-```
-
-Then open `http://localhost:47821` in your browser.
-
-**Auto-start on folder open (VS Code):**
-
-Create `.vscode/tasks.json` in this project with the following content, then re-open the folder. VS Code will prompt _"Allow automatic tasks?"_ once — allow it, and the server starts silently every time you open the project.
+1. Open `plan.html` with the **Live Server** VS Code extension.
+2. Create `.vscode/tasks.json` in this project with the content below, then re-open the folder. VS Code will prompt _"Allow automatic tasks?"_ once — allow it, and `server.js` starts silently on every folder open, writing UI changes directly to `tasks.json`.
 
 ```json
 {
