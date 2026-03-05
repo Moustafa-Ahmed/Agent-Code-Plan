@@ -6,8 +6,22 @@
         <meta name="color-scheme" content="light dark" />
         <title>Project Database</title>
 
+        <script>
+            (function () {
+                const saved = localStorage.getItem("theme");
+                const sysDark = window.matchMedia(
+                    "(prefers-color-scheme: dark)",
+                ).matches;
+                const dark = saved === "dark" || (!saved && sysDark);
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    dark ? "dark" : "light",
+                );
+            })();
+        </script>
+
         <style>
-            @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+            @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=optional");
 
             /* ── Design tokens – light ────────────────────────────── */
             :root {
@@ -376,6 +390,10 @@
                 box-sizing: border-box;
             }
 
+            html {
+                scrollbar-gutter: stable;
+            }
+
             body {
                 margin: 0;
                 min-height: 100vh;
@@ -396,6 +414,10 @@
                 transition:
                     background-color 0.25s,
                     color 0.25s;
+            }
+
+            body.loading .shell {
+                visibility: hidden;
             }
 
             .shell {
@@ -609,12 +631,14 @@
 
             .table-wrap {
                 overflow-x: auto;
+                min-height: 420px;
             }
 
             table {
                 border-collapse: collapse;
                 width: 100%;
-                min-width: 1360px;
+                min-width: 100%;
+                table-layout: fixed;
             }
 
             th,
@@ -624,6 +648,8 @@
                 text-align: left;
                 vertical-align: middle;
                 white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             th {
@@ -791,6 +817,7 @@
                 gap: 12px;
                 grid-template-columns: repeat(3, minmax(220px, 1fr));
                 padding: 14px;
+                min-height: 420px;
             }
 
             .column {
@@ -1615,7 +1642,7 @@
         </style>
     </head>
 
-    <body>
+    <body class="loading">
         <main class="shell">
             <section class="header">
                 <div class="title-row">
@@ -1760,6 +1787,16 @@
 
                 <div id="tableView" class="table-wrap">
                     <table>
+                        <colgroup>
+                            <col style="width: 16%" />
+                            <col style="width: 21%" />
+                            <col style="width: 8%" />
+                            <col style="width: 20%" />
+                            <col style="width: 12%" />
+                            <col style="width: 11%" />
+                            <col style="width: 8%" />
+                            <col style="width: 4%" />
+                        </colgroup>
                         <thead>
                             <tr>
                                 <th>Title</th>
@@ -3201,9 +3238,15 @@
                 render();
             }
 
-            bootstrap().catch(() => {
-                nodes.title.textContent = "Unable to load tasks.json";
-            });
+            bootstrap()
+                .catch(() => {
+                    nodes.title.textContent = "Unable to load tasks.json";
+                    registerEvents();
+                    render();
+                })
+                .finally(() => {
+                    document.body.classList.remove("loading");
+                });
 
             /* ── Theme toggle ─────────────────────────────────────── */
             (function initTheme() {
