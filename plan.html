@@ -641,8 +641,8 @@
             table {
                 border-collapse: collapse;
                 width: 100%;
-                min-width: 100%;
-                table-layout: fixed;
+                min-width: 1320px;
+                table-layout: auto;
             }
 
             th,
@@ -681,6 +681,14 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
+            }
+
+            .table-id {
+                font-size: 0.76rem;
+                color: var(--muted);
+                font-family:
+                    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+                    "Liberation Mono", "Courier New", monospace;
             }
 
             .description-input {
@@ -936,6 +944,25 @@
                 display: block;
                 font-weight: 600;
                 margin-bottom: 6px;
+            }
+
+            .card-title-wrap {
+                min-width: 0;
+            }
+
+            .task-id {
+                display: inline-flex;
+                align-items: center;
+                border: 1px solid var(--line2);
+                background: var(--panel2);
+                color: var(--muted);
+                border-radius: 999px;
+                padding: 2px 7px;
+                font-size: 0.72rem;
+                font-family:
+                    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+                    "Liberation Mono", "Courier New", monospace;
+                margin-bottom: 4px;
             }
 
             .card-meta {
@@ -1471,6 +1498,12 @@
                 align-items: center;
             }
 
+            th:nth-child(9),
+            td:nth-child(9) {
+                overflow: visible;
+                min-width: 116px;
+            }
+
             .view-grid {
                 display: grid;
                 gap: 0;
@@ -1792,17 +1825,19 @@
                 <div id="tableView" class="table-wrap">
                     <table>
                         <colgroup>
-                            <col style="width: 14%" />
-                            <col style="width: 19%" />
-                            <col style="width: 8%" />
-                            <col style="width: 19%" />
-                            <col style="width: 12%" />
+                            <col style="width: 5%" />
+                            <col style="width: 13%" />
+                            <col style="width: 17%" />
+                            <col style="width: 7%" />
+                            <col style="width: 17%" />
                             <col style="width: 11%" />
-                            <col style="width: 8%" />
                             <col style="width: 9%" />
+                            <col style="width: 8%" />
+                            <col style="width: 13%" />
                         </colgroup>
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Title</th>
                                 <th>Description</th>
                                 <th>Type</th>
@@ -2496,7 +2531,7 @@
                 if (!items.length) {
                     const row = document.createElement("tr");
                     row.innerHTML =
-                        '<td colspan="8"><div class="empty">No matching records.</div></td>';
+                        '<td colspan="9"><div class="empty">No matching records.</div></td>';
                     nodes.tableBody.appendChild(row);
                     return;
                 }
@@ -2506,8 +2541,12 @@
                     const safeTitle = escapeHtml(item.title);
                     const safeDescription = escapeHtml(item.description || "");
                     const safeAssignee = escapeHtml(item.assignee);
+                    const safeId = escapeHtml(item.id);
 
                     row.innerHTML = `
+                        <td>
+                            <span class="table-id">#${safeId}</span>
+                        </td>
                         <td>
                             <div class="title-cell ${isDone(item) ? "is-done" : ""}">
                                 <span class="status-dot dot-${toClassToken(item.status)}"></span>
@@ -2631,9 +2670,13 @@
                             item.description || "",
                         );
                         const safeAssignee = escapeHtml(item.assignee);
+                        const safeId = escapeHtml(item.id);
                         card.innerHTML = `
                             <div class="card-head">
-                                <span class="card-title ${isDone(item) ? "is-done" : ""}">${safeTitle}</span>
+                                <div class="card-title-wrap">
+                                    <span class="task-id">#${safeId}</span>
+                                    <span class="card-title ${isDone(item) ? "is-done" : ""}">${safeTitle}</span>
+                                </div>
                                 <div class="card-actions">
                                     <button class="action-button" type="button" data-action="viewRow" data-id="${item.id}">View</button>
                                     <button class="action-button" type="button" data-action="editRow" data-id="${item.id}">Edit</button>
