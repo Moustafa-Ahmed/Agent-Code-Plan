@@ -26,10 +26,9 @@
                 "additionalProperties": true,
                 "properties": {
                     "id": {
-                        "anyOf": [
-                            { "type": "integer" },
-                            { "type": "string", "minLength": 1 }
-                        ]
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[0-9]+(?:\\.[0-9]+)*$"
                     },
                     "title": {
                         "type": "string",
@@ -38,13 +37,21 @@
                     "description": {
                         "type": "string"
                     },
+                    "review": {
+                        "type": "string"
+                    },
                     "type": {
                         "type": "string",
                         "enum": ["task", "feature", "bug"]
                     },
                     "status": {
                         "type": "string",
-                        "enum": ["Todo", "In Progress", "Done"]
+                        "enum": [
+                            "Todo",
+                            "In Progress",
+                            "Waiting for Review",
+                            "Done"
+                        ]
                     },
                     "priority": {
                         "type": "string",

@@ -3,7 +3,7 @@
     "title": "Product Build Database",
     "items": [
         {
-            "id": 1,
+            "id": "1",
             "title": "Set up project skeleton",
             "description": "Initialize Laravel app structure and baseline environments.",
             "type": "task",
@@ -13,7 +13,7 @@
             "createdAt": "2026-02-24"
         },
         {
-            "id": 2,
+            "id": "2",
             "title": "Design auth flow",
             "description": "Map login, registration, reset password, and verification screens.",
             "type": "feature",
@@ -23,7 +23,7 @@
             "createdAt": "2026-02-26"
         },
         {
-            "id": 3,
+            "id": "3",
             "title": "Fix double-submit in login form",
             "description": "Prevent duplicate form submit events while auth request is pending.",
             "type": "bug",
@@ -33,7 +33,7 @@
             "createdAt": "2026-02-27"
         },
         {
-            "id": 4,
+            "id": "4",
             "title": "Build dashboard table pagination",
             "description": "Add server-side pagination and keep filters in query state.",
             "type": "feature",
@@ -43,7 +43,7 @@
             "createdAt": "2026-03-01"
         },
         {
-            "id": 5,
+            "id": "5",
             "title": "Write smoke tests for auth",
             "description": "Cover login success/failure and basic route protection checks.",
             "type": "task",
@@ -53,7 +53,7 @@
             "createdAt": "2026-03-02"
         },
         {
-            "id": 6,
+            "id": "6",
             "title": "Resolve board flicker when filtering",
             "description": "Stabilize board rendering while switching filters quickly.",
             "type": "bug",

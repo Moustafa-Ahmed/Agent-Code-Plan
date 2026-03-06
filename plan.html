@@ -126,6 +126,9 @@
                 --status-in-progress-bg: #fff4df;
                 --status-in-progress-color: #8e6200;
                 --status-in-progress-border: #f1d29b;
+                --status-review-bg: #f2ecff;
+                --status-review-color: #6c46b4;
+                --status-review-border: #d7c8ff;
                 --status-done-bg: #e8f7ef;
                 --status-done-color: #1f7b4b;
                 --status-done-border: #bfe7d0;
@@ -250,6 +253,9 @@
                     --status-in-progress-bg: #241a04;
                     --status-in-progress-color: #e8a030;
                     --status-in-progress-border: #3e2e0a;
+                    --status-review-bg: #211633;
+                    --status-review-color: #b99aff;
+                    --status-review-border: #3d2b62;
                     --status-done-bg: #0e2218;
                     --status-done-color: #50c07a;
                     --status-done-border: #183428;
@@ -370,6 +376,9 @@
                 --status-in-progress-bg: #241a04;
                 --status-in-progress-color: #e8a030;
                 --status-in-progress-border: #3e2e0a;
+                --status-review-bg: #211633;
+                --status-review-color: #b99aff;
+                --status-review-border: #3d2b62;
                 --status-done-bg: #0e2218;
                 --status-done-color: #50c07a;
                 --status-done-border: #183428;
@@ -718,6 +727,9 @@
             .dot-InProgress {
                 background: var(--progress-dot);
             }
+            .dot-WaitingforReview {
+                background: var(--status-review-color);
+            }
             .dot-Done {
                 background: var(--ok);
             }
@@ -766,6 +778,11 @@
                 background: var(--status-in-progress-bg);
                 border-color: var(--status-in-progress-border);
             }
+            .status-option:hover.status-review {
+                color: var(--status-review-color);
+                background: var(--status-review-bg);
+                border-color: var(--status-review-border);
+            }
             .status-option:hover.status-done {
                 color: var(--status-done-color);
                 background: var(--status-done-bg);
@@ -782,6 +799,12 @@
                 color: var(--status-in-progress-color);
                 background: var(--status-in-progress-bg);
                 border-color: var(--status-in-progress-border);
+                font-weight: 600;
+            }
+            .status-option.status-review:has(input:checked) {
+                color: var(--status-review-color);
+                background: var(--status-review-bg);
+                border-color: var(--status-review-border);
                 font-weight: 600;
             }
             .status-option.status-done:has(input:checked) {
@@ -827,7 +850,7 @@
             .board {
                 display: grid;
                 gap: 12px;
-                grid-template-columns: repeat(3, minmax(220px, 1fr));
+                grid-template-columns: repeat(4, minmax(220px, 1fr));
                 padding: 14px;
                 min-height: 420px;
             }
@@ -1252,6 +1275,12 @@
                 border-color: var(--status-in-progress-border);
                 font-weight: 600;
             }
+            .modal-radio-option.status-review:has(input:checked) {
+                color: var(--status-review-color);
+                background: var(--status-review-bg);
+                border-color: var(--status-review-border);
+                font-weight: 600;
+            }
             .modal-radio-option.status-done:has(input:checked) {
                 color: var(--status-done-color);
                 background: var(--status-done-bg);
@@ -1268,6 +1297,11 @@
                 color: var(--status-in-progress-color);
                 background: var(--status-in-progress-bg);
                 border-color: var(--status-in-progress-border);
+            }
+            .modal-radio-option.status-review:hover {
+                color: var(--status-review-color);
+                background: var(--status-review-bg);
+                border-color: var(--status-review-border);
             }
             .modal-radio-option.status-done:hover {
                 color: var(--status-done-color);
@@ -1562,6 +1596,12 @@
                 border-color: var(--status-in-progress-border);
             }
 
+            .view-chip.status-review {
+                background: var(--status-review-bg);
+                color: var(--status-review-color);
+                border-color: var(--status-review-border);
+            }
+
             .view-chip.status-done {
                 background: var(--status-done-bg);
                 color: var(--status-done-color);
@@ -1799,6 +1839,9 @@
                             <option value="all">All Status</option>
                             <option value="Todo">Todo</option>
                             <option value="In Progress">In Progress</option>
+                            <option value="Waiting for Review">
+                                Waiting for Review
+                            </option>
                             <option value="Done">Done</option>
                         </select>
                         <select id="priorityFilter" class="select">
@@ -1983,6 +2026,16 @@
                                         <span>In Progress</span>
                                     </label>
                                     <label
+                                        class="modal-radio-option status-review"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="addStatus"
+                                            value="Waiting for Review"
+                                        />
+                                        <span>Waiting for Review</span>
+                                    </label>
+                                    <label
                                         class="modal-radio-option status-done"
                                     >
                                         <input
@@ -2114,6 +2167,16 @@
                                     class="add-input description-textarea"
                                 ></textarea>
                             </div>
+                            <div class="field-group full">
+                                <label class="field-label" for="editReview"
+                                    >Review</label
+                                >
+                                <textarea
+                                    id="editReview"
+                                    class="add-input description-textarea"
+                                    placeholder="Review notes"
+                                ></textarea>
+                            </div>
                             <fieldset class="modal-radio-section">
                                 <legend class="modal-radio-label">Type</legend>
                                 <div class="modal-radio-group">
@@ -2168,6 +2231,15 @@
                                             name="editStatus"
                                             value="In Progress"
                                         /><span>In Progress</span>
+                                    </label>
+                                    <label
+                                        class="modal-radio-option status-review"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="editStatus"
+                                            value="Waiting for Review"
+                                        /><span>Waiting for Review</span>
                                     </label>
                                     <label
                                         class="modal-radio-option status-done"
@@ -2311,6 +2383,7 @@
                 boardControls: {
                     Todo: "createdAt-desc",
                     "In Progress": "priority-desc",
+                    "Waiting for Review": "createdAt-desc",
                     Done: "createdAt-desc",
                 },
             };
@@ -2345,6 +2418,7 @@
                 editForm: document.getElementById("editForm"),
                 editTitle: document.getElementById("editTitle"),
                 editDescription: document.getElementById("editDescription"),
+                editReview: document.getElementById("editReview"),
                 editAssignee: document.getElementById("editAssignee"),
                 viewModal: document.getElementById("viewModal"),
                 closeViewModalBtn: document.getElementById("closeViewModalBtn"),
@@ -2363,9 +2437,13 @@
                     const text = item.text || item.title || "Untitled";
                     const status = item.status || "Todo";
                     const normalized = {
-                        id: item.id || Date.now() + index,
+                        id:
+                            item.id !== undefined && item.id !== null
+                                ? String(item.id)
+                                : String(Date.now() + index),
                         title: text,
                         description: item.description || "",
+                        review: item.review || "",
                         type: item.type || "task",
                         status,
                         priority: item.priority || "medium",
@@ -2403,6 +2481,10 @@
                     return "status-in-progress";
                 }
 
+                if (status === "Waiting for Review") {
+                    return "status-review";
+                }
+
                 return "status-todo";
             }
 
@@ -2413,6 +2495,10 @@
                     .replace(/>/g, "&gt;")
                     .replace(/\"/g, "&quot;")
                     .replace(/'/g, "&#39;");
+            }
+
+            function idsMatch(left, right) {
+                return String(left) === String(right);
             }
 
             function saveItems() {
@@ -2569,6 +2655,10 @@
                                     <input type="radio" name="status-${item.id}" value="In Progress" data-action="setStatus" data-id="${item.id}" ${item.status === "In Progress" ? "checked" : ""} />
                                     <span>In Progress</span>
                                 </label>
+                                <label class="status-option status-review">
+                                    <input type="radio" name="status-${item.id}" value="Waiting for Review" data-action="setStatus" data-id="${item.id}" ${item.status === "Waiting for Review" ? "checked" : ""} />
+                                    <span>Review</span>
+                                </label>
                                 <label class="status-option status-done">
                                     <input type="radio" name="status-${item.id}" value="Done" data-action="setStatus" data-id="${item.id}" ${item.status === "Done" ? "checked" : ""} />
                                     <span>Done</span>
@@ -2612,7 +2702,12 @@
             }
 
             function renderBoard(items) {
-                const columns = ["Todo", "In Progress", "Done"];
+                const columns = [
+                    "Todo",
+                    "In Progress",
+                    "Waiting for Review",
+                    "Done",
+                ];
                 nodes.boardView.innerHTML = "";
 
                 columns.forEach((status) => {
@@ -2727,7 +2822,7 @@
 
             function updateItem(id, updater) {
                 state.items = state.items.map((item) => {
-                    if (item.id !== id) {
+                    if (!idsMatch(item.id, id)) {
                         return item;
                     }
                     return updater(item);
@@ -2738,13 +2833,17 @@
             }
 
             function deleteItem(id) {
-                state.items = state.items.filter((item) => item.id !== id);
+                state.items = state.items.filter(
+                    (item) => !idsMatch(item.id, id),
+                );
                 persist();
                 render();
             }
 
             function findItemById(id) {
-                return state.items.find((item) => item.id === id) || null;
+                return (
+                    state.items.find((item) => idsMatch(item.id, id)) || null
+                );
             }
 
             function openAddModal() {
@@ -2769,6 +2868,7 @@
                 state.editingItemId = id;
                 nodes.editTitle.value = item.title;
                 nodes.editDescription.value = item.description || "";
+                nodes.editReview.value = item.review || "";
                 nodes.editAssignee.value = item.assignee || "";
 
                 setSelectedRadioValue(nodes.editForm, "editType", item.type);
@@ -2811,6 +2911,9 @@
                 const safePriority = escapeHtml(item.priority);
                 const safeAssignee = escapeHtml(item.assignee || "Unassigned");
                 const safeCreatedAt = escapeHtml(item.createdAt);
+                const safeReview = escapeHtml(
+                    item.review || "No review provided.",
+                );
                 const safeUpdatedAt = item.updatedAt
                     ? escapeHtml(item.updatedAt)
                     : null;
@@ -2834,6 +2937,10 @@
                         <div class="view-row">
                             <span class="view-key">Created</span>
                             <span class="view-value">${safeCreatedAt}</span>
+                        </div>
+                        <div class="view-row">
+                            <span class="view-key">Review</span>
+                            <span class="view-value">${safeReview}</span>
                         </div>
                         ${safeUpdatedAt ? `<div class="view-row"><span class="view-key">Updated</span><span class="view-value">${safeUpdatedAt}</span></div>` : ""}
                         <div class="view-row">
@@ -2970,9 +3077,9 @@
 
                 nodes.tableBody.addEventListener("change", (event) => {
                     const action = event.target.dataset.action;
-                    const id = Number(event.target.dataset.id);
+                    const id = event.target.dataset.id;
 
-                    if (!action || !id) {
+                    if (!action || typeof id === "undefined") {
                         return;
                     }
 
@@ -2996,9 +3103,9 @@
                     const el = event.target.closest("[data-action]");
                     if (!el) return;
                     const action = el.dataset.action;
-                    const id = Number(el.dataset.id);
+                    const id = el.dataset.id;
 
-                    if (!action || !id) {
+                    if (!action || typeof id === "undefined") {
                         return;
                     }
 
@@ -3032,7 +3139,7 @@
                     }
 
                     const item = {
-                        id: Date.now(),
+                        id: String(Date.now()),
                         title,
                         description: nodes.addDescription.value.trim(),
                         type: getSelectedRadioValue(
@@ -3085,6 +3192,7 @@
                             ...item,
                             title,
                             description: nodes.editDescription.value.trim(),
+                            review: nodes.editReview.value.trim(),
                             type: getSelectedRadioValue(
                                 nodes.editForm,
                                 "editType",
@@ -3156,7 +3264,7 @@
                     }
 
                     event.preventDefault();
-                    const id = Number(event.dataTransfer.getData("text/plain"));
+                    const id = event.dataTransfer.getData("text/plain");
                     const nextStatus = column.dataset.status;
 
                     if (!id || !nextStatus) {
@@ -3205,7 +3313,7 @@
                     }
 
                     const item = {
-                        id: Date.now(),
+                        id: String(Date.now()),
                         title,
                         description: "",
                         type: "task",
@@ -3224,9 +3332,9 @@
                     const el = event.target.closest("[data-action]");
                     if (!el) return;
                     const action = el.dataset.action;
-                    const id = Number(el.dataset.id);
+                    const id = el.dataset.id;
 
-                    if (!action || !id) {
+                    if (!action || typeof id === "undefined") {
                         return;
                     }
 
